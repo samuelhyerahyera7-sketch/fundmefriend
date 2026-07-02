@@ -1,6 +1,5 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { ArrowRight } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import CampaignCard from '@/components/CampaignCard'
 import type { Campaign } from '@/types'
@@ -28,7 +27,7 @@ export default async function HomePage() {
         <h1 className="text-5xl sm:text-6xl md:text-7xl font-extrabold text-[#01224b] leading-[1.05] tracking-tight mb-5 max-w-2xl">
           Raise money for the{' '}
           <span className="text-teal-500">people</span>{' '}
-          you love.
+          who need you.
         </h1>
         <p className="text-gray-500 text-lg sm:text-xl mb-8 max-w-lg leading-relaxed">
           FundMeFriend helps you rally friends, family, and neighbors around
@@ -38,8 +37,7 @@ export default async function HomePage() {
         <div className="flex flex-col sm:flex-row gap-3 mb-10">
           <Link href="/create">
             <span className="inline-flex items-center gap-2 bg-brand-green text-white font-semibold px-7 py-3.5 rounded-full hover:bg-brand-green-dark transition-colors text-sm">
-              Start a fundraiser <ArrowRight className="w-4 h-4" />
-            </span>
+              Start a fundraiser            </span>
           </Link>
           <Link href="/campaigns">
             <span className="inline-flex items-center justify-center border border-gray-200 text-gray-700 font-medium px-7 py-3.5 rounded-full hover:bg-gray-50 transition-colors text-sm">
@@ -110,8 +108,7 @@ export default async function HomePage() {
             href="/campaigns"
             className="text-sm text-gray-500 hover:text-gray-900 flex items-center gap-1 mb-1 shrink-0 ml-4"
           >
-            See all <ArrowRight className="w-4 h-4" />
-          </Link>
+            See all          </Link>
         </div>
 
         {featured.length > 0 ? (
@@ -159,8 +156,7 @@ export default async function HomePage() {
 
           <Link href="/create">
             <span className="inline-flex items-center gap-2 bg-brand-green text-white px-7 py-3.5 rounded-full font-semibold hover:bg-brand-green-dark transition-colors">
-              Start a fundraiser <ArrowRight className="w-4 h-4" />
-            </span>
+              Start a fundraiser            </span>
           </Link>
         </div>
       </section>
@@ -198,8 +194,7 @@ export default async function HomePage() {
           </p>
           <Link href="/create">
             <span className="inline-flex items-center gap-2 bg-brand-green text-white font-semibold px-8 py-4 rounded-full hover:bg-brand-green-dark transition-colors text-base">
-              Start a fundraiser <ArrowRight className="w-5 h-5" />
-            </span>
+              Start a fundraiser            </span>
           </Link>
         </div>
       </section>
@@ -220,8 +215,7 @@ export default async function HomePage() {
             <div className="flex flex-col sm:flex-row gap-3">
               <Link href="/create">
                 <span className="inline-flex items-center gap-2 bg-white text-gray-900 font-semibold px-6 py-3 rounded-full hover:bg-gray-100 transition-colors text-sm">
-                  Start a fundraiser <ArrowRight className="w-4 h-4" />
-                </span>
+                  Start a fundraiser                </span>
               </Link>
               <Link href="/campaigns">
                 <span className="inline-flex items-center justify-center border border-gray-600 text-white font-medium px-6 py-3 rounded-full hover:bg-white/5 transition-colors text-sm">
