@@ -2,11 +2,13 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Loader2, ArrowRight, ArrowLeft } from 'lucide-react'
+import { Loader2, ArrowLeft } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
-import { CATEGORIES } from '@/types'
+import { CATEGORIES, CATEGORY_EMOJI } from '@/types'
 
 const minDeadline = new Date(Date.now() + 86400000).toISOString().split('T')[0]
+
+const STEP_LABELS = ['Your cause', 'Your story', 'Photo & launch']
 
 export default function CreateCampaignPage() {
   const router = useRouter()
@@ -29,6 +31,12 @@ export default function CreateCampaignPage() {
     setForm(f => ({ ...f, [key]: value }))
   }
 
+  function canProceed() {
+    if (step === 1) return form.title.trim().length >= 5 && form.description.trim().length >= 10 && form.category
+    if (step === 2) return form.story.trim().length >= 50 && parseFloat(form.goal_amount) >= 100 && form.deadline
+    return true
+  }
+
   function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     if (!file) return
@@ -36,15 +44,8 @@ export default function CreateCampaignPage() {
     setImagePreview(URL.createObjectURL(file))
   }
 
-  function canProceed() {
-    if (step === 1) return form.title.trim() && form.description.trim() && form.category
-    if (step === 2) return form.story.trim().length >= 50 && parseFloat(form.goal_amount) >= 100 && form.deadline
-    return false
-  }
-
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    if (!canProceed()) return
     setError('')
     setLoading(true)
 
@@ -85,32 +86,58 @@ export default function CreateCampaignPage() {
   return (
     <div className="bg-white min-h-screen">
       <div className="max-w-2xl mx-auto px-4 py-12">
-        {/* Header */}
-        <p className="text-teal-500 text-xs font-semibold uppercase tracking-widest mb-3">
-          {step === 1 ? 'START A FUNDRAISER' : 'YOUR STORY'}
-        </p>
-        <h1 className="text-4xl sm:text-5xl font-extrabold text-gray-900 leading-tight mb-3">
-          {step === 1 ? 'Tell us who\nthis is for.' : 'Set your goal\nand details.'}
-        </h1>
-        <p className="text-gray-500 text-base mb-10 leading-relaxed">
-          {step === 1
-            ? 'Just a few gentle questions. You can always come back and polish everything later.'
-            : "Tell your story honestly. People give to people, not just causes."}
-        </p>
 
-        {/* Step indicator dots */}
-        <div className="flex gap-2 mb-10">
-          {[1, 2].map(s => (
-            <div
-              key={s}
-              className={`h-1 rounded-full transition-all ${s === step ? 'w-8 bg-teal-500' : s < step ? 'w-4 bg-teal-300' : 'w-4 bg-gray-200'}`}
-            />
-          ))}
+        {/* Step indicator */}
+        <div className="flex items-center gap-2 mb-8">
+          {STEP_LABELS.map((label, i) => {
+            const s = i + 1
+            const active = s === step
+            const done = s < step
+            return (
+              <div key={s} className="flex items-center gap-2 flex-1">
+                <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0 transition-colors ${
+                  done ? 'bg-brand-green text-white' : active ? 'bg-[#01224b] text-white' : 'bg-gray-100 text-gray-400'
+                }`}>
+                  {done ? '✓' : s}
+                </div>
+                <span className={`text-xs font-medium hidden sm:block ${active ? 'text-[#01224b]' : done ? 'text-brand-green' : 'text-gray-400'}`}>
+                  {label}
+                </span>
+                {s < STEP_LABELS.length && <div className={`flex-1 h-0.5 ${done ? 'bg-brand-green' : 'bg-gray-100'}`} />}
+              </div>
+            )
+          })}
+        </div>
+
+        {/* Header */}
+        <div className="mb-8">
+          {step === 1 && (
+            <>
+              <p className="text-teal-500 text-xs font-semibold uppercase tracking-widest mb-2">Step 1 of 3</p>
+              <h1 className="text-4xl font-extrabold text-[#01224b] mb-2">What is this for?</h1>
+              <p className="text-gray-500 text-sm leading-relaxed">Give your fundraiser a clear title, choose a category, and write one sentence about it.</p>
+            </>
+          )}
+          {step === 2 && (
+            <>
+              <p className="text-teal-500 text-xs font-semibold uppercase tracking-widest mb-2">Step 2 of 3</p>
+              <h1 className="text-4xl font-extrabold text-[#01224b] mb-2">Tell your story.</h1>
+              <p className="text-gray-500 text-sm leading-relaxed">People give to people, not just causes. Be honest and specific — it makes a real difference.</p>
+            </>
+          )}
+          {step === 3 && (
+            <>
+              <p className="text-teal-500 text-xs font-semibold uppercase tracking-widest mb-2">Step 3 of 3</p>
+              <h1 className="text-4xl font-extrabold text-[#01224b] mb-2">Add a photo & launch.</h1>
+              <p className="text-gray-500 text-sm leading-relaxed">Fundraisers with a photo raise significantly more. Add one if you can, then launch.</p>
+            </>
+          )}
         </div>
 
         <form onSubmit={handleSubmit}>
-          <div className="bg-white border border-gray-100 rounded-2xl shadow-sm p-6 sm:p-8 space-y-6">
+          <div className="space-y-5">
 
+            {/* ── Step 1 ── */}
             {step === 1 && (
               <>
                 <div>
@@ -118,13 +145,36 @@ export default function CreateCampaignPage() {
                   <p className="text-xs text-gray-400 mb-2">One clear sentence — like a headline.</p>
                   <input
                     type="text"
-                    placeholder="Help Nomvula pay for cancer treatment"
+                    placeholder="e.g. Help Nomvula pay for cancer treatment"
                     value={form.title}
                     onChange={e => set('title', e.target.value)}
                     required
                     maxLength={120}
                     className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-transparent"
                   />
+                  <p className="text-xs text-gray-400 mt-1 text-right">{form.title.length}/120</p>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-bold text-gray-900 mb-1">Category</label>
+                  <p className="text-xs text-gray-400 mb-3">Choose the one that fits best.</p>
+                  <div className="grid grid-cols-3 gap-2">
+                    {CATEGORIES.map(cat => (
+                      <button
+                        key={cat}
+                        type="button"
+                        onClick={() => set('category', cat)}
+                        className={`flex flex-col items-center gap-1 py-3 px-2 rounded-xl border text-xs font-medium transition-all ${
+                          form.category === cat
+                            ? 'border-[#01224b] bg-[#01224b] text-white'
+                            : 'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'
+                        }`}
+                      >
+                        <span className="text-lg">{CATEGORY_EMOJI[cat]}</span>
+                        {cat}
+                      </button>
+                    ))}
+                  </div>
                 </div>
 
                 <div>
@@ -132,7 +182,7 @@ export default function CreateCampaignPage() {
                   <p className="text-xs text-gray-400 mb-2">One sentence shown on campaign cards.</p>
                   <input
                     type="text"
-                    placeholder="A brief summary of what this campaign is for"
+                    placeholder="A brief summary shown to potential donors"
                     value={form.description}
                     onChange={e => set('description', e.target.value)}
                     required
@@ -140,32 +190,37 @@ export default function CreateCampaignPage() {
                     className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-transparent"
                   />
                 </div>
-
-                <div>
-                  <label className="block text-sm font-bold text-gray-900 mb-1">Category</label>
-                  <p className="text-xs text-gray-400 mb-2">Choose the one that fits best.</p>
-                  <select
-                    value={form.category}
-                    onChange={e => set('category', e.target.value)}
-                    required
-                    className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-transparent appearance-none"
-                  >
-                    <option value="">Select a category</option>
-                    {CATEGORIES.map(cat => (
-                      <option key={cat} value={cat}>{cat}</option>
-                    ))}
-                  </select>
-                </div>
               </>
             )}
 
+            {/* ── Step 2 ── */}
             {step === 2 && (
               <>
                 <div>
-                  <label className="block text-sm font-bold text-gray-900 mb-1">Goal amount (ZAR)</label>
-                  <p className="text-xs text-gray-400 mb-2">Set a realistic, specific goal.</p>
+                  <label className="block text-sm font-bold text-gray-900 mb-1">Your story</label>
+                  <p className="text-xs text-gray-400 mb-2">Who is this for? What happened? What will the money do? Be specific.</p>
+                  <textarea
+                    placeholder="Share what's happening in your own words. The more honest and specific you are, the more people will want to help."
+                    value={form.story}
+                    onChange={e => set('story', e.target.value)}
+                    required
+                    rows={8}
+                    className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-transparent resize-none"
+                  />
+                  <div className="flex justify-between mt-1">
+                    {form.story.length > 0 && form.story.length < 50
+                      ? <p className="text-xs text-amber-500">{50 - form.story.length} more characters needed</p>
+                      : <p className="text-xs text-brand-green">{form.story.length > 0 ? '✓ Good' : ''}</p>
+                    }
+                    <p className="text-xs text-gray-400">{form.story.length} chars</p>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-bold text-gray-900 mb-1">Fundraising goal (ZAR)</label>
+                  <p className="text-xs text-gray-400 mb-2">Set a realistic, specific amount.</p>
                   <div className="relative">
-                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm font-medium">R</span>
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 text-sm font-semibold">R</span>
                     <input
                       type="number"
                       placeholder="5 000"
@@ -173,14 +228,14 @@ export default function CreateCampaignPage() {
                       value={form.goal_amount}
                       onChange={e => set('goal_amount', e.target.value)}
                       required
-                      className="w-full border border-gray-200 rounded-xl pl-8 pr-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-transparent"
+                      className="w-full border border-gray-200 rounded-xl pl-9 pr-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-transparent"
                     />
                   </div>
                 </div>
 
                 <div>
                   <label className="block text-sm font-bold text-gray-900 mb-1">End date</label>
-                  <p className="text-xs text-gray-400 mb-2">30–90 days works best.</p>
+                  <p className="text-xs text-gray-400 mb-2">30–90 days works best for most campaigns.</p>
                   <input
                     type="date"
                     min={minDeadline}
@@ -190,45 +245,66 @@ export default function CreateCampaignPage() {
                     className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-transparent"
                   />
                 </div>
+              </>
+            )}
 
-                <div>
-                  <label className="block text-sm font-bold text-gray-900 mb-1">Your story</label>
-                  <p className="text-xs text-gray-400 mb-2">Who is this for? What&apos;s happened? What will the money do?</p>
-                  <textarea
-                    placeholder="Share what's happening in your own words — friends respond to real stories."
-                    value={form.story}
-                    onChange={e => set('story', e.target.value)}
-                    required
-                    rows={6}
-                    className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-transparent resize-none"
-                  />
-                  {form.story.length > 0 && form.story.length < 50 && (
-                    <p className="text-xs text-gray-400 mt-1">{50 - form.story.length} more characters needed</p>
-                  )}
-                </div>
-
+            {/* ── Step 3 ── */}
+            {step === 3 && (
+              <>
                 <div>
                   <label className="block text-sm font-bold text-gray-900 mb-1">Campaign photo</label>
-                  <p className="text-xs text-gray-400 mb-2">Campaigns with photos raise 2× more.</p>
+                  <p className="text-xs text-gray-400 mb-3">Fundraisers with a photo raise significantly more.</p>
                   {imagePreview ? (
                     <div className="space-y-2">
-                      <img src={imagePreview} alt="Preview" className="w-full h-44 object-cover rounded-xl" />
+                      <img src={imagePreview} alt="Preview" className="w-full h-56 object-cover rounded-xl" />
                       <button
                         type="button"
                         onClick={() => { setImageFile(null); setImagePreview(null) }}
-                        className="text-xs text-gray-400 hover:text-gray-700"
+                        className="text-xs text-gray-400 hover:text-red-500 transition-colors"
                       >
                         Remove photo
                       </button>
                     </div>
                   ) : (
-                    <label className="flex flex-col items-center gap-2 cursor-pointer py-8 border-2 border-dashed border-gray-200 rounded-xl hover:border-teal-300 transition-colors">
-                      <span className="text-2xl">📷</span>
-                      <span className="text-sm text-gray-500">Click to upload a photo</span>
+                    <label className="flex flex-col items-center gap-3 cursor-pointer py-12 border-2 border-dashed border-gray-200 rounded-xl hover:border-teal-400 transition-colors">
+                      <span className="text-3xl">📷</span>
+                      <div className="text-center">
+                        <p className="text-sm font-medium text-gray-700">Click to upload a photo</p>
+                        <p className="text-xs text-gray-400 mt-1">JPG, PNG up to 10MB</p>
+                      </div>
                       <input type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
                     </label>
                   )}
                 </div>
+
+                {/* Review summary */}
+                <div className="bg-gray-50 rounded-xl p-4 space-y-3">
+                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Review your fundraiser</p>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex gap-2">
+                      <span className="text-gray-400 w-20 shrink-0">Title</span>
+                      <span className="text-gray-900 font-medium">{form.title}</span>
+                    </div>
+                    <div className="flex gap-2">
+                      <span className="text-gray-400 w-20 shrink-0">Category</span>
+                      <span className="text-gray-900">{CATEGORY_EMOJI[form.category]} {form.category}</span>
+                    </div>
+                    <div className="flex gap-2">
+                      <span className="text-gray-400 w-20 shrink-0">Goal</span>
+                      <span className="text-gray-900 font-medium">R {parseFloat(form.goal_amount || '0').toLocaleString('en-ZA')}</span>
+                    </div>
+                    <div className="flex gap-2">
+                      <span className="text-gray-400 w-20 shrink-0">Ends</span>
+                      <span className="text-gray-900">{form.deadline}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <p className="text-xs text-gray-400">
+                  By launching you agree to our{' '}
+                  <a href="/terms" className="underline hover:text-gray-700">terms</a>.
+                  Every fundraiser is reviewed before going live.
+                </p>
               </>
             )}
 
@@ -236,46 +312,40 @@ export default function CreateCampaignPage() {
               <div className="p-3 bg-red-50 rounded-xl border border-red-100 text-sm text-red-600">{error}</div>
             )}
 
-            <div className="border-t border-gray-100 pt-5">
-              <p className="text-xs text-gray-400 mb-4">
-                By continuing you agree to our{' '}
-                <a href="/terms" className="underline hover:text-gray-700">friendly-but-real terms</a>.
-              </p>
+            {/* Navigation */}
+            <div className="flex items-center justify-between pt-2">
+              {step > 1 ? (
+                <button
+                  type="button"
+                  onClick={() => { setStep(s => s - 1); setError('') }}
+                  className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-900 transition-colors"
+                >
+                  <ArrowLeft className="w-4 h-4" /> Back
+                </button>
+              ) : <div />}
 
-              <div className="flex items-center justify-between gap-3">
-                {step === 2 ? (
-                  <button
-                    type="button"
-                    onClick={() => { setStep(1); setError('') }}
-                    className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-900 transition-colors"
-                  >
-                    <ArrowLeft className="w-4 h-4" /> Back
-                  </button>
-                ) : <div />}
-
-                {step === 1 ? (
-                  <button
-                    type="button"
-                    onClick={() => { if (canProceed()) setStep(2) }}
-                    disabled={!canProceed()}
-                    className="flex items-center gap-2 bg-gray-900 text-white font-semibold px-6 py-3 rounded-full text-sm hover:bg-gray-800 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-                  >
-                    Continue <ArrowRight className="w-4 h-4" />
-                  </button>
-                ) : (
-                  <button
-                    type="submit"
-                    disabled={loading || !canProceed()}
-                    className="flex items-center gap-2 bg-gray-900 text-white font-semibold px-6 py-3 rounded-full text-sm hover:bg-gray-800 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-                  >
-                    {loading ? (
-                      <><Loader2 className="w-4 h-4 animate-spin" /> Launching...</>
-                    ) : (
-                      <>Save draft <ArrowRight className="w-4 h-4" /></>
-                    )}
-                  </button>
-                )}
-              </div>
+              {step < 3 ? (
+                <button
+                  type="button"
+                  onClick={() => { if (canProceed()) { setStep(s => s + 1); setError('') } }}
+                  disabled={!canProceed()}
+                  className="bg-[#01224b] text-white font-semibold px-8 py-3 rounded-full text-sm hover:bg-[#012a5e] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  Continue
+                </button>
+              ) : (
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="flex items-center gap-2 bg-brand-green text-white font-semibold px-8 py-3 rounded-full text-sm hover:bg-brand-green-dark transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  {loading ? (
+                    <><Loader2 className="w-4 h-4 animate-spin" /> Launching...</>
+                  ) : (
+                    'Launch fundraiser'
+                  )}
+                </button>
+              )}
             </div>
           </div>
         </form>
