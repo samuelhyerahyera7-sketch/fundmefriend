@@ -1,0 +1,71 @@
+import Link from 'next/link'
+import Image from 'next/image'
+import { formatCurrency, getProgressPercent, getDaysLeft } from '@/lib/utils'
+import { CATEGORY_EMOJI } from '@/types'
+import type { Campaign } from '@/types'
+
+interface CampaignCardProps {
+  campaign: Campaign & { donor_count?: number }
+}
+
+export default function CampaignCard({ campaign }: CampaignCardProps) {
+  const percent = getProgressPercent(campaign.raised_amount, campaign.goal_amount)
+  const daysLeft = getDaysLeft(campaign.deadline)
+  const emoji = CATEGORY_EMOJI[campaign.category] ?? '✨'
+  const supporterCount = campaign.donor_count ?? 0
+
+  return (
+    <Link
+      href={`/campaigns/${campaign.id}`}
+      className="group block bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-md transition-shadow duration-200"
+    >
+      {/* Image */}
+      <div className="relative h-52 bg-gray-100">
+        {campaign.image_url ? (
+          <Image
+            src={campaign.image_url}
+            alt={campaign.title}
+            fill
+            className="object-cover"
+          />
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center bg-gray-50">
+            <span className="text-5xl">{emoji}</span>
+          </div>
+        )}
+      </div>
+
+      {/* Body */}
+      <div className="p-4">
+        <div className="flex items-center gap-2 mb-3">
+          <span className="text-xs font-medium text-gray-900 border border-gray-200 rounded-full px-2.5 py-0.5">
+            {campaign.category}
+          </span>
+          <span className="text-xs text-gray-400">South Africa</span>
+        </div>
+
+        <h3 className="font-bold text-gray-900 leading-snug mb-3 line-clamp-2 text-[15px]">
+          {campaign.title}
+        </h3>
+
+        {/* Progress bar */}
+        <div className="w-full bg-gray-100 rounded-full h-1.5 mb-2.5">
+          <div
+            className="bg-teal-500 h-1.5 rounded-full transition-all"
+            style={{ width: `${Math.min(percent, 100)}%` }}
+          />
+        </div>
+
+        <div className="flex justify-between items-baseline mb-1">
+          <span className="font-bold text-gray-900 text-[15px]">{formatCurrency(campaign.raised_amount)}</span>
+          <span className="text-sm text-gray-400">of {formatCurrency(campaign.goal_amount)}</span>
+        </div>
+
+        <p className="text-xs text-gray-400">
+          {supporterCount > 0 ? `${supporterCount} supporters · ` : ''}
+          {daysLeft > 0 ? `${daysLeft} days left` : 'Ended'}
+        </p>
+      </div>
+    </Link>
+  )
+}
