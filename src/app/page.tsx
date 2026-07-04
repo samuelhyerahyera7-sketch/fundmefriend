@@ -104,12 +104,26 @@ export default async function HomePage() {
             {featured.map(c => <CampaignCard key={c.id} campaign={c} />)}
           </div>
         ) : (
-          <div className="text-center py-16 border border-gray-100 rounded-2xl bg-gray-50">
-            <p className="text-gray-400 mb-6 text-sm">No campaigns yet — be the first to start one.</p>
-            <Link href="/create">
-              <span className="bg-brand-green text-white px-6 py-3 rounded-full text-sm font-medium inline-block hover:bg-brand-green-dark transition-colors">
-                Start a fundraiser
-              </span>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <Link href="/demo" className="group block bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-md transition-shadow duration-200">
+              <div className="relative h-52 bg-gradient-to-br from-blue-100 to-teal-100 flex items-center justify-center">
+                <GraduationCap className="w-16 h-16 text-blue-400 opacity-60" />
+              </div>
+              <div className="p-4">
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="text-xs font-medium text-gray-900 border border-gray-200 rounded-full px-2.5 py-0.5">Education</span>
+                  <span className="text-xs text-gray-400">South Africa</span>
+                </div>
+                <h3 className="font-bold text-gray-900 leading-snug mb-3 text-[15px]">Help Thabo finish his engineering degree</h3>
+                <div className="w-full bg-gray-100 rounded-full h-1.5 mb-2.5">
+                  <div className="bg-teal-500 h-1.5 rounded-full" style={{ width: '32%' }} />
+                </div>
+                <div className="flex justify-between items-baseline mb-1">
+                  <span className="font-bold text-gray-900 text-[15px]">R 4,850.00</span>
+                  <span className="text-sm text-gray-400">of R 15,000.00</span>
+                </div>
+                <p className="text-xs text-gray-400">5 supporters · 88 days left</p>
+              </div>
             </Link>
           </div>
         )}
