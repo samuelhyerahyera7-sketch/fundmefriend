@@ -92,7 +92,7 @@ export default async function HomePage() {
         <div className="flex items-end justify-between mb-8">
           <div>
             <p className="text-brand-green text-xs font-semibold uppercase tracking-widest mb-1">FEATURED CAMPAIGNS</p>
-            <h2 className="text-3xl font-extrabold text-[#01224b]">Real people, real moments</h2>
+            <h2 className="text-3xl font-extrabold text-[#01224b]">Active fundraisers</h2>
           </div>
           <Link href="/campaigns" className="text-sm text-teal-600 font-medium hover:underline shrink-0 ml-4">
             View all campaigns
@@ -121,7 +121,7 @@ export default async function HomePage() {
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-2xl font-extrabold text-[#01224b]">Browse by category</h2>
             <Link href="/campaigns" className="text-sm text-teal-600 font-medium hover:underline flex items-center gap-1">
-              See all categories <span aria-hidden>→</span>
+              See all categories
             </Link>
           </div>
           <div className="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-9 gap-3">
