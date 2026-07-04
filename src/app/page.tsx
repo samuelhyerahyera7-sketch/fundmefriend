@@ -1,9 +1,10 @@
 import Link from 'next/link'
 import Image from 'next/image'
+import { Heart, GraduationCap, AlertTriangle, Users, PawPrint, Flower2, Trophy, Briefcase, Sparkles, ShieldCheck, Lock, MapPin, BadgePercent, FileEdit, Share2, HandHeart } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import CampaignCard from '@/components/CampaignCard'
 import type { Campaign } from '@/types'
-import { CATEGORIES, CATEGORY_EMOJI } from '@/types'
+import { CATEGORIES } from '@/types'
 
 const CIRCLE: Record<string, string> = {
   'Medical':        'bg-teal-100 text-teal-600',
@@ -15,6 +16,18 @@ const CIRCLE: Record<string, string> = {
   'Sports':         'bg-green-100 text-green-700',
   'Business':       'bg-indigo-100 text-indigo-600',
   'Other':          'bg-gray-100 text-gray-600',
+}
+
+const CATEGORY_ICON: Record<string, React.ReactNode> = {
+  'Medical':        <Heart className="w-5 h-5" />,
+  'Education':      <GraduationCap className="w-5 h-5" />,
+  'Emergency':      <AlertTriangle className="w-5 h-5" />,
+  'Community':      <Users className="w-5 h-5" />,
+  'Animal Welfare': <PawPrint className="w-5 h-5" />,
+  'Memorial':       <Flower2 className="w-5 h-5" />,
+  'Sports':         <Trophy className="w-5 h-5" />,
+  'Business':       <Briefcase className="w-5 h-5" />,
+  'Other':          <Sparkles className="w-5 h-5" />,
 }
 
 export default async function HomePage() {
@@ -115,8 +128,8 @@ export default async function HomePage() {
             {CATEGORIES.map(cat => (
               <Link key={cat} href={`/campaigns?category=${encodeURIComponent(cat)}`}>
                 <div className="flex flex-col items-center gap-2.5 bg-white rounded-2xl py-5 px-2 hover:shadow-md transition-all border border-gray-100">
-                  <div className={`w-12 h-12 rounded-full flex items-center justify-center text-xl ${CIRCLE[cat] ?? 'bg-gray-100 text-gray-600'}`}>
-                    {CATEGORY_EMOJI[cat]}
+                  <div className={`w-12 h-12 rounded-full flex items-center justify-center ${CIRCLE[cat] ?? 'bg-gray-100 text-gray-600'}`}>
+                    {CATEGORY_ICON[cat] ?? <Sparkles className="w-5 h-5" />}
                   </div>
                   <span className="text-xs text-gray-600 font-medium text-center leading-tight">{cat}</span>
                 </div>
@@ -127,60 +140,35 @@ export default async function HomePage() {
       </section>
 
       {/* ── How it works ── */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16" id="how-it-works">
-        <h2 className="text-3xl font-extrabold text-[#01224b] text-center mb-12">How FundMeFriend works</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-0 relative">
-          {[
-            {
-              icon: (
-                <svg className="w-8 h-8 text-teal-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
-                </svg>
-              ),
-              num: '1',
-              title: 'Create your fundraiser',
-              desc: "It's quick, easy and free. Share your story and set your goal.",
-            },
-            {
-              icon: (
-                <svg className="w-8 h-8 text-teal-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z" />
-                </svg>
-              ),
-              num: '2',
-              title: 'Share with friends & family',
-              desc: 'Spread the word on WhatsApp, Facebook, email and more.',
-            },
-            {
-              icon: (
-                <svg className="w-8 h-8 text-teal-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
-                </svg>
-              ),
-              num: '3',
-              title: 'Receive support safely',
-              desc: 'Donations go directly to your campaign. We handle the rest.',
-            },
-          ].map((step, i) => (
-            <div key={step.num} className="flex flex-col items-center text-center relative px-6 py-6">
-              {/* Arrow between steps */}
-              {i < 2 && (
-                <div className="hidden sm:flex absolute top-[52px] right-0 translate-x-1/2 z-10 items-center justify-center">
-                  <svg className="w-6 h-6 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                  </svg>
+      <section className="bg-gray-50 py-16 px-4" id="how-it-works">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-3xl font-extrabold text-[#01224b] text-center mb-3">How it works</h2>
+          <p className="text-gray-500 text-center text-sm mb-12">Start a fundraiser in minutes. No experience needed.</p>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 sm:gap-4 relative">
+            {/* Connecting line on desktop */}
+            <div className="hidden sm:block absolute top-8 left-[20%] right-[20%] h-px bg-gray-200" />
+            {[
+              { Icon: FileEdit,   num: '1', title: 'Create your fundraiser', desc: 'Tell your story, set your goal and add a photo. Takes about 5 minutes.' },
+              { Icon: Share2,     num: '2', title: 'Share with your network', desc: 'Send your fundraiser link via WhatsApp, Facebook, email and more.' },
+              { Icon: HandHeart,  num: '3', title: 'Receive donations safely', desc: 'Funds go directly to your campaign. Withdraw to your bank anytime.' },
+            ].map((step) => (
+              <div key={step.num} className="flex flex-col items-center text-center relative">
+                <div className="w-16 h-16 rounded-full bg-white border-2 border-teal-500 flex items-center justify-center mb-4 relative z-10 shadow-sm">
+                  <step.Icon className="w-7 h-7 text-teal-500" strokeWidth={1.5} />
                 </div>
-              )}
-              <div className="w-16 h-16 rounded-full bg-teal-50 border-2 border-teal-200 flex items-center justify-center mb-4 relative z-10">
-                {step.icon}
+                <span className="text-xs font-bold text-teal-600 uppercase tracking-widest mb-1">Step {step.num}</span>
+                <h3 className="font-bold text-[#01224b] mb-2">{step.title}</h3>
+                <p className="text-sm text-gray-500 leading-relaxed max-w-[200px]">{step.desc}</p>
               </div>
-              <div className="w-6 h-6 rounded-full bg-[#01224b] text-white text-xs font-bold flex items-center justify-center mb-3">
-                {step.num}
-              </div>
-              <h3 className="font-bold text-[#01224b] mb-2">{step.title}</h3>
-              <p className="text-sm text-gray-500 leading-relaxed max-w-[180px]">{step.desc}</p>
-            </div>
-          ))}
+            ))}
+          </div>
+          <div className="text-center mt-12">
+            <Link href="/create">
+              <span className="inline-flex items-center justify-center bg-brand-green text-white font-semibold px-8 py-3.5 rounded-full hover:bg-brand-green-dark transition-colors text-sm">
+                Start your fundraiser
+              </span>
+            </Link>
+          </div>
         </div>
       </section>
 
@@ -193,14 +181,14 @@ export default async function HomePage() {
           </p>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-8">
             {[
-              { icon: '✅', title: 'Verified campaigns', desc: 'We review campaigns to protect our community.' },
-              { icon: '🔒', title: 'Secure payments', desc: 'Bank-level security on every transaction.' },
-              { icon: '📍', title: 'Local SA support', desc: 'We speak your language and understand your needs.' },
-              { icon: '💯', title: 'Transparent fees', desc: 'Low platform fee. No hidden charges, ever.' },
+              { Icon: ShieldCheck,   title: 'Verified campaigns', desc: 'We review campaigns to protect our community.' },
+              { Icon: Lock,          title: 'Secure payments',    desc: 'Bank-level security on every transaction.' },
+              { Icon: MapPin,        title: 'Local SA support',   desc: 'We speak your language and understand your needs.' },
+              { Icon: BadgePercent,  title: 'Transparent fees',   desc: 'Low platform fee. No hidden charges, ever.' },
             ].map(item => (
               <div key={item.title} className="text-center">
-                <div className="w-14 h-14 rounded-full bg-white/15 flex items-center justify-center text-2xl mx-auto mb-4">
-                  {item.icon}
+                <div className="w-14 h-14 rounded-full bg-white/15 flex items-center justify-center mx-auto mb-4">
+                  <item.Icon className="w-6 h-6 text-white" strokeWidth={1.5} />
                 </div>
                 <h3 className="font-bold text-white mb-1.5 text-sm">{item.title}</h3>
                 <p className="text-xs text-teal-200 leading-relaxed">{item.desc}</p>

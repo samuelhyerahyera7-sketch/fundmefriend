@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
+import { ImageOff } from 'lucide-react'
 import { formatCurrency, getProgressPercent, getDaysLeft } from '@/lib/utils'
-import { CATEGORY_EMOJI } from '@/types'
 import type { Campaign } from '@/types'
 
 interface CampaignCardProps {
@@ -11,7 +11,6 @@ interface CampaignCardProps {
 export default function CampaignCard({ campaign }: CampaignCardProps) {
   const percent = getProgressPercent(campaign.raised_amount, campaign.goal_amount)
   const daysLeft = getDaysLeft(campaign.deadline)
-  const emoji = CATEGORY_EMOJI[campaign.category] ?? '✨'
   const supporterCount = campaign.donor_count ?? 0
 
   return (
@@ -30,7 +29,7 @@ export default function CampaignCard({ campaign }: CampaignCardProps) {
           />
         ) : (
           <div className="absolute inset-0 flex items-center justify-center bg-gray-50">
-            <span className="text-5xl">{emoji}</span>
+            <ImageOff className="w-10 h-10 text-gray-300" />
           </div>
         )}
       </div>
