@@ -5,6 +5,18 @@ import CampaignCard from '@/components/CampaignCard'
 import type { Campaign } from '@/types'
 import { CATEGORIES, CATEGORY_EMOJI } from '@/types'
 
+const CIRCLE: Record<string, string> = {
+  'Medical':        'bg-teal-100 text-teal-600',
+  'Education':      'bg-blue-100 text-blue-600',
+  'Emergency':      'bg-orange-100 text-orange-600',
+  'Community':      'bg-yellow-100 text-yellow-700',
+  'Animal Welfare': 'bg-pink-100 text-pink-600',
+  'Memorial':       'bg-purple-100 text-purple-600',
+  'Sports':         'bg-green-100 text-green-700',
+  'Business':       'bg-indigo-100 text-indigo-600',
+  'Other':          'bg-gray-100 text-gray-600',
+}
+
 export default async function HomePage() {
   let featured: Campaign[] = []
   try {
@@ -23,18 +35,19 @@ export default async function HomePage() {
 
       {/* ── Hero ── */}
       <section className="overflow-hidden bg-white">
-        <div className="max-w-6xl mx-auto px-4">
-          <div className="grid md:grid-cols-2 gap-0 items-stretch min-h-[500px]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid md:grid-cols-2 gap-8 lg:gap-16 items-center">
+
             {/* Left: text */}
-            <div className="py-12 md:py-16 flex flex-col justify-center">
-              <h1 className="text-5xl sm:text-6xl font-extrabold text-[#01224b] leading-[1.05] tracking-tight mb-5">
+            <div className="py-14 md:py-20 flex flex-col justify-center">
+              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold text-[#01224b] leading-[1.05] tracking-tight mb-5">
                 Together,<br />we make<br />
-                <span className="text-teal-500">dreams</span> possible.
+                <span className="text-teal-500">dreams</span><br />possible.
               </h1>
-              <p className="text-gray-500 text-lg mb-8 leading-relaxed max-w-md">
-                Raise money for education, medical needs, funerals, emergencies and more.
+              <p className="text-gray-500 text-lg mb-8 leading-relaxed max-w-sm">
+                Raise money for education, medical needs, funerals, emergencies and more — right here in South Africa.
               </p>
-              <div className="flex flex-col sm:flex-row gap-3 mb-6">
+              <div className="flex flex-wrap gap-3 mb-6">
                 <Link href="/create">
                   <span className="inline-flex items-center justify-center bg-brand-green text-white font-semibold px-7 py-3.5 rounded-full hover:bg-brand-green-dark transition-colors text-sm">
                     Start a fundraiser
@@ -46,15 +59,18 @@ export default async function HomePage() {
                   </span>
                 </Link>
               </div>
-              <p className="text-xs text-gray-400 flex items-center gap-1.5">
-                <span>🛡️</span> Safe. Secure. Trusted by South Africans.
-              </p>
+              <div className="flex items-center gap-2 text-sm text-gray-400">
+                <svg className="w-4 h-4 text-teal-500 shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z" />
+                </svg>
+                Safe. Secure. Trusted by thousands of South Africans.
+              </div>
             </div>
 
             {/* Right: photo */}
-            <div className="relative h-72 md:h-auto rounded-3xl md:rounded-none md:rounded-l-3xl overflow-hidden mt-4 md:mt-0">
+            <div className="relative h-[440px] md:h-[600px] rounded-3xl overflow-hidden">
               <Image
-                src="/graduate.jpg.png"
+                src="/graduate gogo.png"
                 alt="Graduate celebrating with family"
                 fill
                 sizes="(max-width: 768px) 100vw, 50vw"
@@ -62,13 +78,24 @@ export default async function HomePage() {
                 priority
                 unoptimized
               />
+              {/* Floating donation notification */}
+              <div className="absolute bottom-6 left-4 bg-white rounded-2xl shadow-xl px-4 py-3 flex items-center gap-3 max-w-[248px]">
+                <div className="w-9 h-9 rounded-full bg-teal-100 flex items-center justify-center text-sm shrink-0 font-bold text-teal-700">
+                  S
+                </div>
+                <div>
+                  <p className="text-xs font-bold text-gray-800">Sipho M. just donated R200</p>
+                  <p className="text-xs text-gray-400">Wishing you all the best! 💚</p>
+                </div>
+              </div>
             </div>
+
           </div>
         </div>
       </section>
 
       {/* ── Featured campaigns ── */}
-      <section className="max-w-6xl mx-auto px-4 py-14">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="flex items-end justify-between mb-8">
           <div>
             <p className="text-brand-green text-xs font-semibold uppercase tracking-widest mb-1">FEATURED CAMPAIGNS</p>
@@ -80,12 +107,12 @@ export default async function HomePage() {
         </div>
 
         {featured.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {featured.map(c => <CampaignCard key={c.id} campaign={c} />)}
           </div>
         ) : (
-          <div className="text-center py-16 border border-gray-100 rounded-2xl">
-            <p className="text-gray-400 mb-6 text-sm">No campaigns yet — be the first.</p>
+          <div className="text-center py-16 border border-gray-100 rounded-2xl bg-gray-50">
+            <p className="text-gray-400 mb-6 text-sm">No campaigns yet — be the first to start one.</p>
             <Link href="/create">
               <span className="bg-brand-green text-white px-6 py-3 rounded-full text-sm font-medium inline-block hover:bg-brand-green-dark transition-colors">
                 Start a fundraiser
@@ -96,17 +123,21 @@ export default async function HomePage() {
       </section>
 
       {/* ── Browse by category ── */}
-      <section className="bg-gray-50 py-14 px-4">
-        <div className="max-w-6xl mx-auto">
+      <section className="bg-gray-50 py-16 px-4">
+        <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-2xl font-extrabold text-[#01224b]">Browse by category</h2>
-            <Link href="/campaigns" className="text-sm text-teal-600 font-medium hover:underline">See all</Link>
+            <Link href="/campaigns" className="text-sm text-teal-600 font-medium hover:underline flex items-center gap-1">
+              See all categories <span aria-hidden>→</span>
+            </Link>
           </div>
-          <div className="grid grid-cols-4 sm:grid-cols-8 gap-3">
+          <div className="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-9 gap-3">
             {CATEGORIES.map(cat => (
               <Link key={cat} href={`/campaigns?category=${encodeURIComponent(cat)}`}>
-                <div className="flex flex-col items-center gap-2 bg-white rounded-2xl py-4 px-2 hover:shadow-sm transition-shadow border border-gray-100">
-                  <span className="text-2xl">{CATEGORY_EMOJI[cat]}</span>
+                <div className="flex flex-col items-center gap-2.5 bg-white rounded-2xl py-5 px-2 hover:shadow-md transition-all border border-gray-100">
+                  <div className={`w-12 h-12 rounded-full flex items-center justify-center text-xl ${CIRCLE[cat] ?? 'bg-gray-100 text-gray-600'}`}>
+                    {CATEGORY_EMOJI[cat]}
+                  </div>
                   <span className="text-xs text-gray-600 font-medium text-center leading-tight">{cat}</span>
                 </div>
               </Link>
@@ -116,81 +147,83 @@ export default async function HomePage() {
       </section>
 
       {/* ── How it works ── */}
-      <section className="max-w-6xl mx-auto px-4 py-14" id="how-it-works">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16" id="how-it-works">
         <h2 className="text-3xl font-extrabold text-[#01224b] text-center mb-12">How FundMeFriend works</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-10 relative">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-0 relative">
           {[
-            { num: '1', title: 'Create your fundraiser', desc: "It's quick, easy and free. Share your story and goal.", emoji: '📝' },
-            { num: '2', title: 'Share with friends & family', desc: 'Spread the word on WhatsApp, Facebook, email and more.', emoji: '📲' },
-            { num: '3', title: 'Receive support safely', desc: 'Donations go directly to your campaign. We handle the rest.', emoji: '🤝' },
+            {
+              icon: (
+                <svg className="w-8 h-8 text-teal-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+                </svg>
+              ),
+              num: '1',
+              title: 'Create your fundraiser',
+              desc: "It's quick, easy and free. Share your story and set your goal.",
+            },
+            {
+              icon: (
+                <svg className="w-8 h-8 text-teal-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z" />
+                </svg>
+              ),
+              num: '2',
+              title: 'Share with friends & family',
+              desc: 'Spread the word on WhatsApp, Facebook, email and more.',
+            },
+            {
+              icon: (
+                <svg className="w-8 h-8 text-teal-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+                </svg>
+              ),
+              num: '3',
+              title: 'Receive support safely',
+              desc: 'Donations go directly to your campaign. We handle the rest.',
+            },
           ].map((step, i) => (
-            <div key={step.num} className="flex flex-col items-center text-center relative">
+            <div key={step.num} className="flex flex-col items-center text-center relative px-6 py-6">
+              {/* Arrow between steps */}
               {i < 2 && (
-                <div className="hidden sm:block absolute top-8 left-[58%] right-[-42%] h-0.5 bg-gray-200 z-0" />
+                <div className="hidden sm:flex absolute top-[52px] right-0 translate-x-1/2 z-10 items-center justify-center">
+                  <svg className="w-6 h-6 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                  </svg>
+                </div>
               )}
-              <div className="w-16 h-16 rounded-full bg-teal-50 border-2 border-teal-100 flex items-center justify-center text-2xl mb-3 relative z-10">
-                {step.emoji}
+              <div className="w-16 h-16 rounded-full bg-teal-50 border-2 border-teal-200 flex items-center justify-center mb-4 relative z-10">
+                {step.icon}
               </div>
               <div className="w-6 h-6 rounded-full bg-[#01224b] text-white text-xs font-bold flex items-center justify-center mb-3">
                 {step.num}
               </div>
               <h3 className="font-bold text-[#01224b] mb-2">{step.title}</h3>
-              <p className="text-sm text-gray-500 leading-relaxed">{step.desc}</p>
+              <p className="text-sm text-gray-500 leading-relaxed max-w-[180px]">{step.desc}</p>
             </div>
           ))}
-        </div>
-      </section>
-
-      {/* ── Photo grid + copy ── */}
-      <section className="max-w-6xl mx-auto px-4 py-10">
-        <div className="grid grid-cols-2 gap-3 mb-10">
-          {[
-            { src: '/hockey.jpg.png', alt: 'Girl playing field hockey' },
-            { src: '/grandma.jpg.png', alt: 'South African grandmother' },
-            { src: '/hospital.jpg.png', alt: 'Child in hospital' },
-            { src: '/graduate.jpg.png', alt: 'Graduate celebrating' },
-          ].map((img) => (
-            <div key={img.src} className="relative h-44 sm:h-64 rounded-2xl overflow-hidden">
-              <Image src={img.src} alt={img.alt} fill sizes="50vw" className="object-cover object-top" unoptimized />
-            </div>
-          ))}
-        </div>
-        <div className="text-center max-w-2xl mx-auto">
-          <h2 className="text-4xl sm:text-5xl font-extrabold text-[#01224b] mb-4">
-            Some things you just can&apos;t face alone.
-          </h2>
-          <p className="text-lg font-semibold italic text-teal-600 mb-5">
-            A diagnosis. A fire. Fees due. A family in crisis.
-          </p>
-          <p className="text-gray-500 text-base leading-relaxed mb-6">
-            FundMeFriend gives you a clear, dignified way to share what you&apos;re going through
-            and let the people who care about you respond.
-          </p>
-          <Link href="/create">
-            <span className="inline-flex items-center bg-brand-green text-white font-semibold px-8 py-4 rounded-full hover:bg-brand-green-dark transition-colors text-base">
-              Start a fundraiser
-            </span>
-          </Link>
         </div>
       </section>
 
       {/* ── Trust section ── */}
-      <section className="bg-[#01224b] py-14 px-4">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl font-extrabold text-white text-center mb-12">Safe. Transparent. Trusted.</h2>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
+      <section className="bg-[#0f5c48] py-16 px-4">
+        <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
+          <h2 className="text-3xl font-extrabold text-white text-center mb-2">Safe. Transparent. Trusted.</h2>
+          <p className="text-teal-200 text-sm text-center mb-12">
+            Everything you need to fundraise with confidence in South Africa.
+          </p>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-8">
             {[
-              { emoji: '✅', title: 'Verified campaigns', desc: 'We review campaigns to help keep our community safe.' },
-              { emoji: '🔒', title: 'Secure payments', desc: 'Your donations are protected with bank-level security.' },
-              { emoji: '📍', title: 'Local SA support', desc: "We're here to help, in the languages you speak." },
-              { emoji: '💯', title: 'Transparent fees', desc: 'Low platform fee. No hidden charges.' },
+              { icon: '✅', title: 'Verified campaigns', desc: 'We review campaigns to protect our community.' },
+              { icon: '🔒', title: 'Secure payments', desc: 'Bank-level security on every transaction.' },
+              { icon: '📍', title: 'Local SA support', desc: 'We speak your language and understand your needs.' },
+              { icon: '💯', title: 'Transparent fees', desc: 'Low platform fee. No hidden charges, ever.' },
             ].map(item => (
               <div key={item.title} className="text-center">
-                <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center text-xl mx-auto mb-3">
-                  {item.emoji}
+                <div className="w-14 h-14 rounded-full bg-white/15 flex items-center justify-center text-2xl mx-auto mb-4">
+                  {item.icon}
                 </div>
-                <h3 className="font-bold text-white mb-1 text-sm">{item.title}</h3>
-                <p className="text-xs text-blue-200 leading-relaxed">{item.desc}</p>
+                <h3 className="font-bold text-white mb-1.5 text-sm">{item.title}</h3>
+                <p className="text-xs text-teal-200 leading-relaxed">{item.desc}</p>
               </div>
             ))}
           </div>
@@ -198,14 +231,14 @@ export default async function HomePage() {
       </section>
 
       {/* ── Bottom CTA ── */}
-      <section className="max-w-6xl mx-auto px-4 py-14">
-        <div className="bg-gray-900 rounded-3xl px-8 py-14 sm:px-14 text-center relative overflow-hidden">
-          <div className="absolute -top-16 -right-16 w-64 h-64 bg-teal-500/20 rounded-full blur-3xl pointer-events-none" />
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="bg-[#01224b] rounded-3xl px-8 py-14 sm:px-16 text-center relative overflow-hidden">
+          <div className="absolute -top-20 -right-20 w-80 h-80 bg-teal-500/10 rounded-full blur-3xl pointer-events-none" />
           <div className="relative">
             <h2 className="text-3xl sm:text-4xl font-extrabold text-white mb-4">
               Someone in your life could use a friend today.
             </h2>
-            <p className="text-gray-400 mb-8 max-w-md mx-auto text-sm leading-relaxed">
+            <p className="text-blue-200 mb-8 max-w-md mx-auto text-sm leading-relaxed">
               Start a fundraiser in about five minutes. Free to launch, free to share.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
@@ -215,7 +248,7 @@ export default async function HomePage() {
                 </span>
               </Link>
               <Link href="/campaigns">
-                <span className="inline-flex items-center justify-center border border-gray-600 text-white font-medium px-8 py-3.5 rounded-full hover:bg-white/5 transition-colors text-sm">
+                <span className="inline-flex items-center justify-center border border-white/30 text-white font-medium px-8 py-3.5 rounded-full hover:bg-white/5 transition-colors text-sm">
                   Back a friend
                 </span>
               </Link>
