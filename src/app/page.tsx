@@ -60,14 +60,14 @@ export default async function HomePage() {
           />
         </div>
         {/* CTA buttons — bottom-left, overlaid on the image */}
-        <div className="absolute bottom-10 left-4 sm:bottom-16 sm:left-8 md:bottom-20 md:left-12 lg:bottom-24 lg:left-20 flex flex-col gap-2 sm:gap-3">
+        <div className="absolute bottom-3 left-3 sm:bottom-16 sm:left-8 md:bottom-20 md:left-12 lg:bottom-24 lg:left-20 flex flex-col gap-1.5 sm:gap-3">
           <Link href="/create">
-            <span className="inline-flex items-center justify-center bg-brand-green text-white font-semibold px-5 sm:px-8 py-2.5 sm:py-3.5 rounded-full hover:bg-brand-green-dark transition-colors text-xs sm:text-sm shadow-md">
+            <span className="inline-flex items-center justify-center bg-brand-green text-white font-semibold px-3.5 sm:px-8 py-1.5 sm:py-3.5 rounded-full hover:bg-brand-green-dark transition-colors text-[10px] sm:text-sm shadow-md">
               Start a fundraiser
             </span>
           </Link>
           <Link href="/campaigns">
-            <span className="inline-flex items-center justify-center bg-white border border-gray-200 text-gray-700 font-medium px-5 sm:px-8 py-2.5 sm:py-3.5 rounded-full hover:bg-gray-50 transition-colors text-xs sm:text-sm shadow-sm">
+            <span className="inline-flex items-center justify-center bg-white border border-gray-200 text-gray-700 font-medium px-3.5 sm:px-8 py-1.5 sm:py-3.5 rounded-full hover:bg-gray-50 transition-colors text-[10px] sm:text-sm shadow-sm">
               Browse fundraisers
             </span>
           </Link>
