@@ -59,34 +59,20 @@ export default async function HomePage() {
             unoptimized
           />
         </div>
-        {/* Desktop only: buttons overlaid bottom-left */}
-        <div className="hidden sm:flex absolute bottom-16 left-8 md:bottom-20 md:left-12 lg:bottom-24 lg:left-20 flex-col gap-3">
+        {/* CTA buttons — bottom-left overlaid, below the writing */}
+        <div className="absolute bottom-3 left-3 sm:bottom-16 sm:left-8 md:bottom-20 md:left-12 lg:bottom-24 lg:left-20 flex flex-col gap-1.5 sm:gap-3">
           <Link href="/create">
-            <span className="inline-flex items-center justify-center bg-brand-green text-white font-semibold px-8 py-3.5 rounded-full hover:bg-brand-green-dark transition-colors text-sm shadow-md">
+            <span className="inline-flex items-center justify-center bg-brand-green text-white font-semibold px-4 sm:px-8 py-1.5 sm:py-3.5 rounded-full hover:bg-brand-green-dark transition-colors text-[11px] sm:text-sm shadow-md">
               Start a fundraiser
             </span>
           </Link>
           <Link href="/campaigns">
-            <span className="inline-flex items-center justify-center bg-white border border-gray-200 text-gray-700 font-medium px-8 py-3.5 rounded-full hover:bg-gray-50 transition-colors text-sm shadow-sm">
+            <span className="inline-flex items-center justify-center bg-white/90 border border-gray-200 text-gray-700 font-medium px-4 sm:px-8 py-1.5 sm:py-3.5 rounded-full hover:bg-white transition-colors text-[11px] sm:text-sm shadow-sm">
               Browse fundraisers
             </span>
           </Link>
         </div>
       </section>
-
-      {/* Mobile only: buttons below the image */}
-      <div className="sm:hidden px-4 py-5 flex flex-col gap-2.5 bg-white">
-        <Link href="/create">
-          <span className="flex items-center justify-center bg-brand-green text-white font-semibold px-6 py-3 rounded-full hover:bg-brand-green-dark transition-colors text-sm w-full">
-            Start a fundraiser
-          </span>
-        </Link>
-        <Link href="/campaigns">
-          <span className="flex items-center justify-center border border-gray-200 text-gray-700 font-medium px-6 py-3 rounded-full hover:bg-gray-50 transition-colors text-sm w-full">
-            Browse fundraisers
-          </span>
-        </Link>
-      </div>
 
       {/* ── Featured campaigns ── */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
