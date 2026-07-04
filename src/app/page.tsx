@@ -34,7 +34,7 @@ export default async function HomePage() {
     <div className="bg-white">
 
       {/* ── Hero ── */}
-      <section className="bg-white">
+      <section className="bg-white relative">
         {/* Desktop image */}
         <div className="hidden md:block w-full">
           <Image
@@ -59,25 +59,23 @@ export default async function HomePage() {
             unoptimized
           />
         </div>
-        {/* CTA buttons */}
-        <div className="bg-white px-4 py-8 flex flex-col sm:flex-row gap-3 justify-center items-center">
+        {/* CTA buttons — bottom-left, overlaid on the image */}
+        <div className="absolute bottom-6 left-4 sm:bottom-10 sm:left-8 md:bottom-12 md:left-12 lg:bottom-16 lg:left-20 flex flex-col gap-2 sm:gap-3">
           <Link href="/create">
-            <span className="inline-flex items-center justify-center bg-brand-green text-white font-semibold px-8 py-3.5 rounded-full hover:bg-brand-green-dark transition-colors text-sm">
+            <span className="inline-flex items-center justify-center bg-brand-green text-white font-semibold px-5 sm:px-8 py-2.5 sm:py-3.5 rounded-full hover:bg-brand-green-dark transition-colors text-xs sm:text-sm shadow-md">
               Start a fundraiser
             </span>
           </Link>
           <Link href="/campaigns">
-            <span className="inline-flex items-center justify-center border border-gray-200 text-gray-700 font-medium px-8 py-3.5 rounded-full hover:bg-gray-50 transition-colors text-sm">
+            <span className="inline-flex items-center justify-center bg-white border border-gray-200 text-gray-700 font-medium px-5 sm:px-8 py-2.5 sm:py-3.5 rounded-full hover:bg-gray-50 transition-colors text-xs sm:text-sm shadow-sm">
               Browse fundraisers
             </span>
           </Link>
-        </div>
-        <div className="flex justify-center pb-8">
-          <div className="flex items-center gap-2 text-sm text-gray-400">
-            <svg className="w-4 h-4 text-teal-500 shrink-0" viewBox="0 0 24 24" fill="currentColor">
+          <div className="flex items-center gap-1.5 text-[10px] sm:text-xs text-gray-500 mt-1">
+            <svg className="w-3 h-3 text-teal-500 shrink-0" viewBox="0 0 24 24" fill="currentColor">
               <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z" />
             </svg>
-            Safe. Secure. Trusted by thousands of South Africans.
+            Safe. Secure. Trusted by South Africans.
           </div>
         </div>
       </section>
