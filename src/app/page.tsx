@@ -60,7 +60,7 @@ export default async function HomePage() {
           />
         </div>
         {/* CTA buttons — bottom-left overlaid, below the writing */}
-        <div className="absolute bottom-3 left-3 sm:bottom-16 sm:left-8 md:bottom-20 md:left-12 lg:bottom-24 lg:left-20 flex flex-col gap-1.5 sm:gap-3">
+        <div className="absolute bottom-8 left-3 sm:bottom-16 sm:left-8 md:bottom-20 md:left-12 lg:bottom-24 lg:left-20 flex flex-col gap-1.5 sm:gap-3">
           <Link href="/create">
             <span className="inline-flex items-center justify-center bg-brand-green text-white font-semibold px-4 sm:px-8 py-1.5 sm:py-3.5 rounded-full hover:bg-brand-green-dark transition-colors text-[11px] sm:text-sm shadow-md">
               Start a fundraiser
