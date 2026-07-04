@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from 'react'
-import { ChevronLeft, ShieldCheck, CheckCircle2 } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { ChevronLeft, ShieldCheck, CheckCircle2, Loader2, Lock } from 'lucide-react'
 
 const PRESETS = [
   { label: 'R50',  value: 50 },
@@ -10,8 +10,10 @@ const PRESETS = [
   { label: 'R500', value: 500 },
 ]
 
+type Step = 1 | 2 | 'paying' | 'done'
+
 export default function DemoDonateForm() {
-  const [step, setStep] = useState<1 | 2 | 3>(1)
+  const [step, setStep] = useState<Step>(1)
   const [selectedPreset, setSelectedPreset] = useState<number | null>(null)
   const [customAmount, setCustomAmount] = useState('')
   const [name, setName] = useState('')
@@ -30,6 +32,22 @@ export default function DemoDonateForm() {
     setCustomAmount(val)
     setSelectedPreset(null)
   }
+
+  function reset() {
+    setStep(1)
+    setSelectedPreset(null)
+    setCustomAmount('')
+    setName('')
+    setMessage('')
+    setIsAnonymous(false)
+  }
+
+  // Simulate payment gateway redirect delay then success
+  useEffect(() => {
+    if (step !== 'paying') return
+    const t = setTimeout(() => setStep('done'), 2800)
+    return () => clearTimeout(t)
+  }, [step])
 
   /* ── Step 1: Choose amount ── */
   if (step === 1) {
@@ -81,22 +99,51 @@ export default function DemoDonateForm() {
     )
   }
 
-  /* ── Step 3: Thank you ── */
-  if (step === 3) {
+  /* ── Paying: simulated gateway redirect ── */
+  if (step === 'paying') {
     return (
-      <div className="text-center py-4 space-y-3">
-        <CheckCircle2 className="w-12 h-12 text-green-500 mx-auto" />
-        <p className="font-bold text-gray-900 text-lg">Thank you{name && !isAnonymous ? `, ${name.split(' ')[0]}` : ''}!</p>
-        <p className="text-sm text-gray-500">
-          Your R{amount.toLocaleString('en-ZA')} donation makes a real difference.
-        </p>
-        <p className="text-xs text-gray-400 bg-gray-50 rounded-xl px-4 py-3 border border-gray-100">
-          This is a demo — no payment was taken. On the live site you would be redirected to Ozow to complete your EFT.
+      <div className="text-center py-6 space-y-4">
+        <div className="w-14 h-14 rounded-full bg-[#01224b] flex items-center justify-center mx-auto">
+          <Lock className="w-6 h-6 text-white" />
+        </div>
+        <div>
+          <p className="font-bold text-gray-900 text-base">Connecting to Ozow</p>
+          <p className="text-sm text-gray-500 mt-1">Securing your R{amount.toLocaleString('en-ZA')} payment...</p>
+        </div>
+        <Loader2 className="w-6 h-6 text-[#599e3a] animate-spin mx-auto" />
+        <p className="text-xs text-gray-400">You would be redirected to Ozow&apos;s secure EFT page</p>
+      </div>
+    )
+  }
+
+  /* ── Done: payment confirmed ── */
+  if (step === 'done') {
+    return (
+      <div className="text-center py-4 space-y-4">
+        <CheckCircle2 className="w-14 h-14 text-green-500 mx-auto" />
+        <div>
+          <p className="font-bold text-gray-900 text-lg">
+            Payment confirmed!
+          </p>
+          <p className="text-sm text-gray-500 mt-1">
+            {isAnonymous ? 'Your anonymous donation of' : `${name || 'Your'} donation of`} R{amount.toLocaleString('en-ZA')} was received.
+          </p>
+        </div>
+        {message && (
+          <div className="bg-gray-50 rounded-xl px-4 py-3 text-sm text-gray-600 text-left border border-gray-100">
+            &ldquo;{message}&rdquo;
+          </div>
+        )}
+        <div className="bg-green-50 border border-green-100 rounded-xl px-4 py-3 text-xs text-green-700 text-left">
+          A confirmation email has been sent. The campaign organiser will be notified.
+        </div>
+        <p className="text-xs text-gray-400">
+          This is a demo — no real payment was taken.
         </p>
         <button
           type="button"
-          onClick={() => { setStep(1); setSelectedPreset(null); setCustomAmount(''); setName(''); setMessage('') }}
-          className="text-sm text-[#01224b] font-medium hover:underline"
+          onClick={reset}
+          className="text-sm text-[#01224b] font-semibold hover:underline"
         >
           Donate again
         </button>
@@ -120,21 +167,21 @@ export default function DemoDonateForm() {
         <span className="text-xl font-extrabold text-[#01224b]">R{amount.toLocaleString('en-ZA')}</span>
       </div>
 
-      {!isAnonymous && (
-        <div>
-          <label className="block text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">
-            Your name <span className="font-normal normal-case">— optional</span>
-          </label>
-          <input
-            type="text"
-            placeholder="e.g. Sipho Ndlovu"
-            value={name}
-            onChange={e => setName(e.target.value)}
-            maxLength={80}
-            className="w-full h-11 px-4 rounded-xl border-2 border-gray-200 text-sm focus:outline-none focus:border-[#01224b] bg-white"
-          />
-        </div>
-      )}
+      {/* Name field — always in DOM, fades out when anonymous to avoid layout jump */}
+      <div className={`transition-all duration-200 overflow-hidden ${isAnonymous ? 'opacity-0 h-0 pointer-events-none' : 'opacity-100'}`}>
+        <label className="block text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">
+          Your name <span className="font-normal normal-case">— optional</span>
+        </label>
+        <input
+          type="text"
+          placeholder="e.g. Sipho Ndlovu"
+          value={name}
+          onChange={e => setName(e.target.value)}
+          maxLength={80}
+          tabIndex={isAnonymous ? -1 : 0}
+          className="w-full h-11 px-4 rounded-xl border-2 border-gray-200 text-sm focus:outline-none focus:border-[#01224b] bg-white"
+        />
+      </div>
 
       <div>
         <label className="block text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">
@@ -150,6 +197,7 @@ export default function DemoDonateForm() {
         />
       </div>
 
+      {/* Anonymous toggle */}
       <label className="flex items-center gap-3 cursor-pointer select-none py-1">
         <button
           type="button"
@@ -165,7 +213,7 @@ export default function DemoDonateForm() {
 
       <button
         type="button"
-        onClick={() => setStep(3)}
+        onClick={() => setStep('paying')}
         className="w-full py-4 rounded-xl bg-[#599e3a] hover:bg-[#4a8730] text-white font-bold text-base transition-colors shadow-sm"
       >
         Donate R{amount.toLocaleString('en-ZA')}
