@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Loader2, ArrowLeft } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
@@ -12,6 +12,12 @@ const STEP_LABELS = ['Your cause', 'Your story', 'Photo & launch']
 
 export default function CreateCampaignPage() {
   const router = useRouter()
+
+  useEffect(() => {
+    createClient().auth.getUser().then(({ data }) => {
+      if (!data.user) router.replace('/login?redirect=/create')
+    })
+  }, [router])
   const [step, setStep] = useState(1)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')

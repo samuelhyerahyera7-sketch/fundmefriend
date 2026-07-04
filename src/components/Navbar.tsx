@@ -36,7 +36,7 @@ export default function Navbar({ user }: NavbarProps) {
             <Link href="/campaigns" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">
               Browse fundraisers
             </Link>
-            {user ? (
+            {user && (
               <>
                 <Link href="/dashboard" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">
                   Dashboard
@@ -48,10 +48,6 @@ export default function Navbar({ user }: NavbarProps) {
                   Sign out
                 </button>
               </>
-            ) : (
-              <Link href="/login" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">
-                Sign in
-              </Link>
             )}
             <Link href="/create">
               <span className="bg-brand-green hover:bg-brand-green-dark text-white text-sm font-medium px-5 py-2.5 rounded-full hover:bg-gray-800 transition-colors inline-block">
@@ -84,7 +80,7 @@ export default function Navbar({ user }: NavbarProps) {
           <Link href="/campaigns" className="block text-gray-700 py-2 border-b border-gray-100" onClick={() => setMenuOpen(false)}>
             Browse fundraisers
           </Link>
-          {user ? (
+          {user && (
             <>
               <Link href="/dashboard" className="block text-gray-700 py-2 border-b border-gray-100" onClick={() => setMenuOpen(false)}>
                 Dashboard
@@ -92,15 +88,6 @@ export default function Navbar({ user }: NavbarProps) {
               <button onClick={handleSignOut} className="block text-gray-700 py-2 w-full text-left">
                 Sign out
               </button>
-            </>
-          ) : (
-            <>
-              <Link href="/login" className="block text-gray-700 py-2 border-b border-gray-100" onClick={() => setMenuOpen(false)}>
-                Sign in
-              </Link>
-              <Link href="/register" className="block text-gray-700 py-2" onClick={() => setMenuOpen(false)}>
-                Create account
-              </Link>
             </>
           )}
         </div>
