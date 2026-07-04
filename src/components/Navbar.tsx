@@ -54,7 +54,7 @@ export default function Navbar({ user }: NavbarProps) {
               </Link>
             )}
             <Link href="/create">
-              <span className="bg-gray-900 text-white text-sm font-medium px-5 py-2.5 rounded-full hover:bg-gray-800 transition-colors inline-block">
+              <span className="bg-brand-green hover:bg-brand-green-dark text-white text-sm font-medium px-5 py-2.5 rounded-full hover:bg-gray-800 transition-colors inline-block">
                 Start a fundraiser
               </span>
             </Link>
@@ -63,7 +63,7 @@ export default function Navbar({ user }: NavbarProps) {
           {/* Mobile */}
           <div className="flex md:hidden items-center gap-3">
             <Link href="/create">
-              <span className="bg-gray-900 text-white text-xs font-medium px-4 py-2 rounded-full inline-block">
+              <span className="bg-brand-green hover:bg-brand-green-dark text-white text-xs font-medium px-4 py-2 rounded-full inline-block">
                 Start a fundraiser
               </span>
             </Link>
