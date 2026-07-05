@@ -2,6 +2,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { ImageOff } from 'lucide-react'
 import { formatCurrency, getProgressPercent, getDaysLeft } from '@/lib/utils'
+import { CATEGORY_COLORS, CATEGORY_EMOJI } from '@/types'
 import type { Campaign } from '@/types'
 
 interface CampaignCardProps {
@@ -12,6 +13,8 @@ export default function CampaignCard({ campaign }: CampaignCardProps) {
   const percent = getProgressPercent(campaign.raised_amount, campaign.goal_amount)
   const daysLeft = getDaysLeft(campaign.deadline)
   const supporterCount = campaign.donor_count ?? 0
+  const colors = CATEGORY_COLORS[campaign.category] ?? CATEGORY_COLORS['Other']
+  const emoji = CATEGORY_EMOJI[campaign.category] ?? '✨'
 
   return (
     <Link
@@ -37,8 +40,8 @@ export default function CampaignCard({ campaign }: CampaignCardProps) {
       {/* Body */}
       <div className="p-4">
         <div className="flex items-center gap-2 mb-3">
-          <span className="text-xs font-medium text-gray-900 border border-gray-200 rounded-full px-2.5 py-0.5">
-            {campaign.category}
+          <span className={`inline-flex items-center gap-1 text-xs font-semibold rounded-full px-2.5 py-0.5 border ${colors.bg} ${colors.text} ${colors.border}`}>
+            {emoji} {campaign.category}
           </span>
           <span className="text-xs text-gray-400">South Africa</span>
         </div>
@@ -50,7 +53,7 @@ export default function CampaignCard({ campaign }: CampaignCardProps) {
         {/* Progress bar */}
         <div className="w-full bg-gray-100 rounded-full h-1.5 mb-2.5">
           <div
-            className="bg-teal-500 h-1.5 rounded-full transition-all"
+            className="bg-gradient-to-r from-teal-500 to-brand-green h-1.5 rounded-full transition-all"
             style={{ width: `${Math.min(percent, 100)}%` }}
           />
         </div>
