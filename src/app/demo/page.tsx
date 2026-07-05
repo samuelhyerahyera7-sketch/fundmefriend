@@ -54,6 +54,13 @@ export default function DemoPage() {
   return (
     <div className="bg-gray-50 min-h-screen">
 
+      {/* ── Preview banner ── */}
+      <div className="bg-amber-50 border-b border-amber-200 px-4 py-2.5 text-center">
+        <p className="text-xs font-semibold text-amber-800">
+          This is an example fundraiser to show how FundMeFriend works — no real donations are processed here.
+        </p>
+      </div>
+
       {/* ── Navy hero banner ── */}
       <div className="bg-[#01224b] px-4 py-10 sm:py-14">
         <div className="max-w-6xl mx-auto">

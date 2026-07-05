@@ -25,7 +25,8 @@ export default async function DashboardPage() {
   const totalRaised = campaigns?.reduce((s, c) => s + c.raised_amount, 0) ?? 0
   const totalDonated = myDonations?.reduce((s, d) => s + d.amount, 0) ?? 0
   const activeCampaigns = campaigns?.filter(c => c.status === 'active') ?? []
-  const completedCampaigns = campaigns?.filter(c => c.status !== 'active') ?? []
+  const pendingCampaigns = campaigns?.filter(c => c.status === 'pending_review') ?? []
+  const completedCampaigns = campaigns?.filter(c => c.status === 'completed' || c.status === 'cancelled') ?? []
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-10">
@@ -91,6 +92,26 @@ export default async function DashboardPage() {
           </div>
         )}
       </div>
+
+      {/* Pending review */}
+      {pendingCampaigns.length > 0 && (
+        <div className="mb-10">
+          <h2 className="text-lg font-bold text-gray-900 mb-4">Awaiting review</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {pendingCampaigns.map(c => (
+              <div key={c.id} className="relative">
+                <CampaignCard campaign={c as Campaign} />
+                <div className="absolute top-3 left-3 bg-amber-100 text-amber-800 text-xs font-bold px-2.5 py-1 rounded-full">
+                  Under review
+                </div>
+              </div>
+            ))}
+          </div>
+          <p className="text-xs text-gray-400 mt-3">
+            New fundraisers are reviewed before they appear publicly. This usually takes less than a day.
+          </p>
+        </div>
+      )}
 
       {/* Recent donations received */}
       {recentReceived && recentReceived.length > 0 && (

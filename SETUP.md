@@ -12,6 +12,7 @@ A full crowdfunding platform with:
 - Dashboard: my campaigns + my donations
 - Campaign management: post updates, view donors, cancel campaign
 - Ozow webhook to auto-update payment status
+- Campaign moderation queue: new fundraisers await admin approval before going public
 
 ---
 
@@ -25,9 +26,15 @@ A full crowdfunding platform with:
    - **anon/public key** → `NEXT_PUBLIC_SUPABASE_ANON_KEY`
    - **service_role key** → `SUPABASE_SERVICE_ROLE_KEY`
 
-5. Go to **SQL Editor** and paste the entire contents of `supabase/migrations/001_initial.sql`, then run it
+5. Go to **SQL Editor** and run the migrations in `supabase/migrations/` **in order** (001, then 002, then 003)
 
-6. Go to **Storage → New bucket**, create a bucket called `campaign-images`, set it to **Public**
+6. New fundraisers now start as `pending_review` and only go public once approved. Make your own account an admin so you can approve campaigns at `/admin/campaigns`:
+   ```sql
+   update public.profiles set is_admin = true where id = '<your-user-id>';
+   ```
+   (Find your user id under **Authentication → Users**.)
+
+7. Go to **Storage → New bucket**, create a bucket called `campaign-images`, set it to **Public**
 
 ---
 
@@ -98,3 +105,5 @@ Open http://localhost:3000
 | `/register` | Create account |
 | `/donate/success` | After successful payment |
 | `/donate/cancel` | After cancelled payment |
+| `/admin/campaigns` | Approve/reject pending fundraisers (admins only) |
+| `/terms`, `/privacy`, `/about`, `/trust` | Legal & info pages |

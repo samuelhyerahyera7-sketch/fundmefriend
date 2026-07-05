@@ -9,7 +9,7 @@ export type Campaign = {
   category: string
   image_url: string | null
   deadline: string
-  status: 'active' | 'completed' | 'cancelled'
+  status: 'pending_review' | 'active' | 'completed' | 'cancelled'
   created_at: string
   profiles?: Profile
 }
@@ -33,6 +33,7 @@ export type Profile = {
   full_name: string | null
   avatar_url: string | null
   bio: string | null
+  is_admin?: boolean
 }
 
 export type CampaignUpdate = {

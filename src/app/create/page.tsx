@@ -43,9 +43,23 @@ export default function CreateCampaignPage() {
     return true
   }
 
+  const MAX_IMAGE_BYTES = 10 * 1024 * 1024
+  const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp']
+
   function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     if (!file) return
+    e.target.value = ''
+
+    if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
+      setError('Please upload a JPG, PNG, or WEBP image.')
+      return
+    }
+    if (file.size > MAX_IMAGE_BYTES) {
+      setError('Image must be under 10MB.')
+      return
+    }
+    setError('')
     setImageFile(file)
     setImagePreview(URL.createObjectURL(file))
   }
@@ -309,7 +323,7 @@ export default function CreateCampaignPage() {
                 <p className="text-xs text-gray-400">
                   By launching you agree to our{' '}
                   <a href="/terms" className="underline hover:text-gray-700">terms</a>.
-                  Every fundraiser is reviewed before going live.
+                  Every fundraiser is reviewed before it appears publicly.
                 </p>
               </>
             )}
