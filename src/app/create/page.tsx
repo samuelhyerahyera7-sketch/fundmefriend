@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { Loader2, ArrowLeft } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { CATEGORIES, CATEGORY_EMOJI } from '@/types'
 
@@ -340,7 +340,7 @@ export default function CreateCampaignPage() {
                   onClick={() => { setStep(s => s - 1); setError('') }}
                   className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-900 transition-colors"
                 >
-                  <ArrowLeft className="w-4 h-4" /> Back
+                  Back
                 </button>
               ) : <div />}
 

@@ -102,7 +102,7 @@ export default function ManageCampaignPage() {
       {/* Header */}
       <div className="flex items-start justify-between">
         <div>
-          <Link href="/dashboard" className="text-sm text-green-600 hover:underline mb-2 block">← Dashboard</Link>
+          <Link href="/dashboard" className="text-sm text-green-600 hover:underline mb-2 block">Dashboard</Link>
           <h1 className="text-xl font-extrabold text-gray-900 leading-tight">{campaign.title}</h1>
           <div className="flex items-center gap-3 mt-1 text-sm">
             <span className={`font-semibold ${campaign.status === 'active' ? 'text-green-600' : campaign.status === 'pending_review' ? 'text-amber-600' : 'text-gray-400'}`}>

@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import { PlusCircle, TrendingUp, Heart, Users, ArrowRight } from 'lucide-react'
+import { PlusCircle, TrendingUp, Heart, Users } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import CampaignCard from '@/components/CampaignCard'
 import { Button } from '@/components/ui/button'
@@ -129,7 +129,7 @@ export default async function DashboardPage() {
                       {d.is_anonymous ? 'Anonymous' : (d.profiles?.full_name ?? 'Friend')}
                     </p>
                     <p className="text-xs text-gray-400 truncate">
-                      → {(d as any).campaigns?.title ?? 'Your campaign'}
+                      To {(d as any).campaigns?.title ?? 'Your campaign'}
                     </p>
                   </div>
                 </div>

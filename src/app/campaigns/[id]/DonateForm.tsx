@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Loader2, ChevronLeft, ShieldCheck } from 'lucide-react'
+import { Loader2, ShieldCheck } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 
 const PRESETS = [
@@ -136,7 +136,7 @@ export default function DonateForm({ campaignId, campaignTitle }: { campaignId: 
         onClick={() => setStep(1)}
         className="flex items-center gap-1 text-sm text-gray-400 hover:text-gray-700 transition-colors -mt-1"
       >
-        <ChevronLeft className="w-4 h-4" /> Change amount
+        Change amount
       </button>
 
       {/* Amount summary */}

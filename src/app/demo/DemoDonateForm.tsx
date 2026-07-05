@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { ChevronLeft, ShieldCheck, CheckCircle2, Loader2, Lock } from 'lucide-react'
+import { ShieldCheck, CheckCircle2, Loader2, Lock } from 'lucide-react'
 
 const PRESETS = [
   { label: 'R50',  value: 50 },
@@ -162,7 +162,7 @@ export default function DemoDonateForm() {
         onClick={() => setStep(1)}
         className="flex items-center gap-1 text-sm text-gray-400 hover:text-gray-700 transition-colors -mt-1"
       >
-        <ChevronLeft className="w-4 h-4" /> Change amount
+        Change amount
       </button>
 
       <div className="bg-gray-50 rounded-xl px-4 py-3 flex justify-between items-center">

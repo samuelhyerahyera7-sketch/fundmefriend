@@ -243,7 +243,7 @@ export default async function CampaignPage({ params }: Props) {
                   href={`/dashboard/campaigns/${campaign.id}`}
                   className="block text-center text-sm text-green-600 hover:text-green-700 font-medium hover:underline"
                 >
-                  Manage this campaign →
+                  Manage this campaign
                 </Link>
               </div>
             )}
@@ -257,7 +257,7 @@ export default async function CampaignPage({ params }: Props) {
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl font-bold text-gray-900">More {campaign.category} campaigns</h2>
             <Link href={`/campaigns?category=${campaign.category}`} className="text-green-600 text-sm font-medium hover:underline">
-              View all →
+              View all
             </Link>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -295,7 +295,7 @@ function MobileProgressCard({
       )}
       {isOwner && (
         <Link href={`/dashboard/campaigns/${campaignId}`} className="block mt-3 text-center text-sm text-green-600 hover:underline font-medium">
-          Manage campaign →
+          Manage campaign
         </Link>
       )}
     </>
