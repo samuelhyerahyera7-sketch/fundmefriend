@@ -111,12 +111,12 @@ export default async function HomePage() {
               </div>
               <div className="p-4">
                 <div className="flex items-center gap-2 mb-3">
-                  <span className="text-xs font-medium text-gray-900 border border-gray-200 rounded-full px-2.5 py-0.5">Education</span>
+                  <span className="inline-flex items-center gap-1 text-xs font-semibold rounded-full px-2.5 py-0.5 border bg-blue-50 text-blue-700 border-blue-100">🎓 Education</span>
                   <span className="text-xs text-gray-400">South Africa</span>
                 </div>
                 <h3 className="font-bold text-gray-900 leading-snug mb-3 text-[15px]">Help Thabo finish his engineering degree</h3>
                 <div className="w-full bg-gray-100 rounded-full h-1.5 mb-2.5">
-                  <div className="bg-teal-500 h-1.5 rounded-full" style={{ width: '32%' }} />
+                  <div className="bg-gradient-to-r from-teal-500 to-brand-green h-1.5 rounded-full" style={{ width: '32%' }} />
                 </div>
                 <div className="flex justify-between items-baseline mb-1">
                   <span className="font-bold text-gray-900 text-[15px]">R 4,850.00</span>
