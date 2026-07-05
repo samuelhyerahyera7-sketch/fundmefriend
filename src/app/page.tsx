@@ -212,33 +212,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ── Bottom CTA ── */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="bg-[#01224b] rounded-3xl px-8 py-14 sm:px-16 text-center relative overflow-hidden">
-          <div className="absolute -top-20 -right-20 w-80 h-80 bg-teal-500/10 rounded-full blur-3xl pointer-events-none" />
-          <div className="relative">
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-white mb-4">
-              Someone in your life could use a friend today.
-            </h2>
-            <p className="text-blue-200 mb-8 max-w-md mx-auto text-sm leading-relaxed">
-              Start a fundraiser in about five minutes. Free to launch, free to share.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <Link href="/create">
-                <span className="inline-flex items-center justify-center bg-brand-green text-white font-semibold px-8 py-3.5 rounded-full hover:bg-brand-green-dark transition-colors text-sm">
-                  Start a fundraiser
-                </span>
-              </Link>
-              <Link href="/campaigns">
-                <span className="inline-flex items-center justify-center border border-white/30 text-white font-medium px-8 py-3.5 rounded-full hover:bg-white/5 transition-colors text-sm">
-                  Back a friend
-                </span>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-
     </div>
   )
 }
