@@ -68,6 +68,12 @@ export default async function CampaignPage({ params }: Props) {
         <span className="text-gray-600 truncate max-w-xs">{campaign.title}</span>
       </nav>
 
+      {isOwner && campaign.status === 'pending_review' && (
+        <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-xl text-sm text-amber-800">
+          Your fundraiser is awaiting review and isn&apos;t visible to the public yet. This usually takes less than a day.
+        </div>
+      )}
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Main content */}
         <div className="lg:col-span-2 space-y-6">
@@ -215,7 +221,12 @@ export default async function CampaignPage({ params }: Props) {
               </div>
             )}
 
-            {campaign.status !== 'active' && (
+            {campaign.status === 'pending_review' && (
+              <div className="mb-5 p-3 bg-amber-50 rounded-xl text-sm text-amber-700 text-center">
+                This fundraiser is awaiting review.
+              </div>
+            )}
+            {(campaign.status === 'completed' || campaign.status === 'cancelled' || (campaign.status === 'active' && daysLeft <= 0)) && (
               <div className="mb-5 p-3 bg-gray-50 rounded-xl text-sm text-gray-500 text-center">
                 This campaign has ended.
               </div>

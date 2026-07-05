@@ -322,8 +322,8 @@ export default function CreateCampaignPage() {
 
                 <p className="text-xs text-gray-400">
                   By launching you agree to our{' '}
-                  <a href="/terms" className="underline hover:text-gray-700">terms</a>{' '}
-                  and confirm that everything you&apos;ve shared is accurate.
+                  <a href="/terms" className="underline hover:text-gray-700">terms</a>.
+                  Every fundraiser is reviewed before it appears publicly.
                 </p>
               </>
             )}
