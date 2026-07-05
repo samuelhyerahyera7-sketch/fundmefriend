@@ -53,6 +53,9 @@ export default function DemoDonateForm() {
   if (step === 1) {
     return (
       <div className="space-y-4">
+        <div className="bg-amber-50 border border-amber-100 rounded-lg px-3 py-2 text-xs text-amber-700 font-medium">
+          Preview only — this form does not take a real payment.
+        </div>
         <p className="text-[11px] font-bold text-gray-400 uppercase tracking-widest">Choose an amount</p>
         <div className="grid grid-cols-2 gap-2.5">
           {PRESETS.map(p => (

@@ -13,6 +13,24 @@ export async function POST(req: NextRequest) {
   const num = parseFloat(amount)
   if (!num || num < 5) return NextResponse.json({ error: 'Minimum R5' }, { status: 400 })
 
+  if (!campaignId) return NextResponse.json({ error: 'Missing campaignId' }, { status: 400 })
+
+  const { data: campaign, error: campaignErr } = await supabase
+    .from('campaigns')
+    .select('id, status, deadline')
+    .eq('id', campaignId)
+    .single()
+
+  if (campaignErr || !campaign) {
+    return NextResponse.json({ error: 'Campaign not found' }, { status: 404 })
+  }
+  if (campaign.status !== 'active') {
+    return NextResponse.json({ error: 'This fundraiser is no longer accepting donations' }, { status: 400 })
+  }
+  if (new Date(campaign.deadline) < new Date()) {
+    return NextResponse.json({ error: 'This fundraiser has ended' }, { status: 400 })
+  }
+
   const reference = `FMF-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`
 
   const { error: dbErr } = await supabase.from('donations').insert({
