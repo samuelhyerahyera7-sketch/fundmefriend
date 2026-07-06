@@ -2,7 +2,6 @@ import crypto from 'crypto'
 
 const SITE_CODE = process.env.OZOW_SITE_CODE!
 const PRIVATE_KEY = process.env.OZOW_PRIVATE_KEY!
-const API_KEY = process.env.OZOW_API_KEY!
 
 export function generateOzowHash(params: Record<string, string>) {
   const values = Object.values(params).join('').toLowerCase()

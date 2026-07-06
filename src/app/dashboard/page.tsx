@@ -4,7 +4,7 @@ import { PlusCircle, TrendingUp, Heart, Users } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import CampaignCard from '@/components/CampaignCard'
 import { Button } from '@/components/ui/button'
-import { formatCurrency, formatDate, getProgressPercent } from '@/lib/utils'
+import { formatCurrency, formatDate } from '@/lib/utils'
 import type { Campaign, Donation } from '@/types'
 
 export default async function DashboardPage() {
@@ -129,7 +129,7 @@ export default async function DashboardPage() {
                       {d.is_anonymous ? 'Anonymous' : (d.profiles?.full_name ?? 'Friend')}
                     </p>
                     <p className="text-xs text-gray-400 truncate">
-                      To {(d as any).campaigns?.title ?? 'Your campaign'}
+                      To {d.campaigns?.title ?? 'Your campaign'}
                     </p>
                   </div>
                 </div>
@@ -151,8 +151,8 @@ export default async function DashboardPage() {
             {myDonations.map(d => (
               <div key={d.id} className="flex items-center justify-between px-5 py-3.5">
                 <div className="min-w-0">
-                  <Link href={`/campaigns/${(d as any).campaigns?.id}`} className="text-sm font-medium text-gray-800 hover:text-green-600 transition-colors truncate block">
-                    {(d as any).campaigns?.title ?? 'Campaign'}
+                  <Link href={`/campaigns/${d.campaigns?.id}`} className="text-sm font-medium text-gray-800 hover:text-green-600 transition-colors truncate block">
+                    {d.campaigns?.title ?? 'Campaign'}
                   </Link>
                   <p className="text-xs text-gray-400">{formatDate(d.created_at)}</p>
                 </div>

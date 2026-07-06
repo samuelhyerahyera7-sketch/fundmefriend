@@ -1,9 +1,8 @@
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Calendar, Heart, Users } from 'lucide-react'
+import { Calendar, Users } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
-import { Badge } from '@/components/ui/badge'
 import DonateForm from './DonateForm'
 import ShareButtons from '@/components/ShareButtons'
 import CampaignCard from '@/components/CampaignCard'
@@ -124,7 +123,6 @@ export default async function CampaignPage({ params }: Props) {
               donorCount={donorCount}
               status={campaign.status}
               campaignId={id}
-              campaignTitle={campaign.title}
               isOwner={isOwner}
             />
           </div>
@@ -217,7 +215,7 @@ export default async function CampaignPage({ params }: Props) {
             {/* Donate */}
             {campaign.status === 'active' && daysLeft > 0 && (
               <div className="mb-5">
-                <DonateForm campaignId={campaign.id} campaignTitle={campaign.title} />
+                <DonateForm campaignId={campaign.id} />
               </div>
             )}
 
@@ -270,10 +268,10 @@ export default async function CampaignPage({ params }: Props) {
 }
 
 function MobileProgressCard({
-  raised, goal, percent, daysLeft, isUrgent, donorCount, status, campaignId, campaignTitle, isOwner
+  raised, goal, percent, daysLeft, isUrgent, donorCount, status, campaignId, isOwner
 }: {
   raised: number; goal: number; percent: number; daysLeft: number; isUrgent: boolean;
-  donorCount: number; status: string; campaignId: string; campaignTitle: string; isOwner: boolean;
+  donorCount: number; status: string; campaignId: string; isOwner: boolean;
 }) {
   return (
     <>
@@ -291,7 +289,7 @@ function MobileProgressCard({
         </span>
       </div>
       {status === 'active' && daysLeft > 0 && (
-        <DonateForm campaignId={campaignId} campaignTitle={campaignTitle} />
+        <DonateForm campaignId={campaignId} />
       )}
       {isOwner && (
         <Link href={`/dashboard/campaigns/${campaignId}`} className="block mt-3 text-center text-sm text-green-600 hover:underline font-medium">

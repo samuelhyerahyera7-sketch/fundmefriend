@@ -12,8 +12,9 @@ interface Props {
 export default async function CampaignsPage({ searchParams }: Props) {
   const { category, q, sort } = await searchParams
   const supabase = await createClient()
-  const now = new Date().toISOString()
-  const sevenDays = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
+  const nowDate = new Date()
+  const now = nowDate.toISOString()
+  const sevenDays = new Date(nowDate.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString()
 
   let query = supabase
     .from('campaigns')

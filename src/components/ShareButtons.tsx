@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Check, Copy, Share2 } from 'lucide-react'
+import { Check, Copy } from 'lucide-react'
 
 interface ShareButtonsProps {
   title: string
