@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 import { Loader2 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { CATEGORIES, CATEGORY_EMOJI } from '@/types'
@@ -276,7 +277,9 @@ export default function CreateCampaignPage() {
                   <p className="text-xs text-gray-400 mb-3">Fundraisers with a photo raise significantly more.</p>
                   {imagePreview ? (
                     <div className="space-y-2">
-                      <img src={imagePreview} alt="Preview" className="w-full h-56 object-cover rounded-xl" />
+                      <div className="relative w-full h-56">
+                        <Image src={imagePreview} alt="Preview" fill unoptimized className="object-cover rounded-xl" />
+                      </div>
                       <button
                         type="button"
                         onClick={() => { setImageFile(null); setImagePreview(null) }}

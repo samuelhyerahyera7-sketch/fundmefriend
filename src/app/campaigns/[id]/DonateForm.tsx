@@ -13,7 +13,7 @@ const PRESETS = [
 
 const OZOW_POST_URL = 'https://pay.ozow.com/'
 
-export default function DonateForm({ campaignId, campaignTitle }: { campaignId: string; campaignTitle: string }) {
+export default function DonateForm({ campaignId }: { campaignId: string }) {
   const [step, setStep] = useState<1 | 2>(1)
   const [selectedPreset, setSelectedPreset] = useState<number | null>(null)
   const [customAmount, setCustomAmount] = useState('')
