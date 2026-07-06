@@ -1,3 +1,6 @@
+import type { LucideIcon } from 'lucide-react'
+import { HeartPulse, GraduationCap, TriangleAlert, Users, PawPrint, Flower2, Trophy, Briefcase, Sparkles } from 'lucide-react'
+
 export type Campaign = {
   id: string
   user_id: string
@@ -56,16 +59,16 @@ export const CATEGORIES = [
   'Other',
 ]
 
-export const CATEGORY_EMOJI: Record<string, string> = {
-  'Medical': '🏥',
-  'Education': '🎓',
-  'Emergency': '🚨',
-  'Community': '🤝',
-  'Animal Welfare': '🐾',
-  'Memorial': '🕊️',
-  'Sports': '🏆',
-  'Business': '💼',
-  'Other': '✨',
+export const CATEGORY_ICON: Record<string, LucideIcon> = {
+  'Medical': HeartPulse,
+  'Education': GraduationCap,
+  'Emergency': TriangleAlert,
+  'Community': Users,
+  'Animal Welfare': PawPrint,
+  'Memorial': Flower2,
+  'Sports': Trophy,
+  'Business': Briefcase,
+  'Other': Sparkles,
 }
 
 export const CATEGORY_COLORS: Record<string, { bg: string; text: string; border: string }> = {

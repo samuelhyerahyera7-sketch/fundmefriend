@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { Search, SlidersHorizontal } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import CampaignCard from '@/components/CampaignCard'
-import { CATEGORIES, CATEGORY_EMOJI } from '@/types'
+import { CATEGORIES, CATEGORY_ICON } from '@/types'
 import type { Campaign } from '@/types'
 
 interface Props {
@@ -95,7 +95,7 @@ export default async function CampaignsPage({ searchParams }: Props) {
           All
         </Link>
         {CATEGORIES.map(cat => {
-          const emoji = CATEGORY_EMOJI[cat] ?? '✨'
+          const Icon = CATEGORY_ICON[cat] ?? CATEGORY_ICON['Other']
           const isActive = category === cat
           return (
             <Link
@@ -107,7 +107,7 @@ export default async function CampaignsPage({ searchParams }: Props) {
                   : 'bg-white text-gray-600 border-gray-200 hover:border-green-300 hover:text-green-700'
               }`}
             >
-              {emoji} {cat}
+              <Icon className="w-3.5 h-3.5" /> {cat}
             </Link>
           )
         })}
@@ -120,7 +120,7 @@ export default async function CampaignsPage({ searchParams }: Props) {
         </div>
       ) : (
         <div className="text-center py-24 bg-white rounded-2xl border border-dashed border-gray-200">
-          <div className="text-5xl mb-4">🔍</div>
+          <Search className="w-12 h-12 text-gray-300 mx-auto mb-4" />
           <p className="text-lg font-semibold text-gray-700 mb-2">No campaigns found</p>
           <p className="text-gray-400 text-sm mb-6">
             {hasFilters ? 'Try different filters or search terms.' : 'Be the first to start a campaign!'}

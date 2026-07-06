@@ -4,7 +4,7 @@ import { useState, Suspense } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { Loader2, Eye, EyeOff } from 'lucide-react'
+import { Loader2, Eye, EyeOff, Wallet, Zap, Smartphone, Lock } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 
 function LoginForm() {
@@ -109,12 +109,15 @@ function LoginForm() {
           </p>
           <div className="space-y-3 text-left">
             {[
-              '💸 Zero platform fees — 100% goes to campaigns',
-              '⚡ Fast EFT withdrawals to your bank',
-              '📱 Share on WhatsApp in one tap',
-              '🔒 Every fundraiser verified and protected',
-            ].map(t => (
-              <p key={t} className="text-sm text-blue-100">{t}</p>
+              { Icon: Wallet, text: 'Zero platform fees — 100% goes to campaigns' },
+              { Icon: Zap, text: 'Fast EFT withdrawals to your bank' },
+              { Icon: Smartphone, text: 'Share on WhatsApp in one tap' },
+              { Icon: Lock, text: 'Every fundraiser verified and protected' },
+            ].map(({ Icon, text }) => (
+              <div key={text} className="flex items-center gap-3">
+                <Icon className="w-4 h-4 text-blue-300 shrink-0" />
+                <p className="text-sm text-blue-100">{text}</p>
+              </div>
             ))}
           </div>
         </div>

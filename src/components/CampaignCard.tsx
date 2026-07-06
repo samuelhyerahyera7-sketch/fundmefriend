@@ -2,7 +2,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { ImageOff } from 'lucide-react'
 import { formatCurrency, getProgressPercent, getDaysLeft } from '@/lib/utils'
-import { CATEGORY_COLORS, CATEGORY_EMOJI } from '@/types'
+import { CATEGORY_COLORS, CATEGORY_ICON } from '@/types'
 import type { Campaign } from '@/types'
 
 interface CampaignCardProps {
@@ -14,7 +14,7 @@ export default function CampaignCard({ campaign }: CampaignCardProps) {
   const daysLeft = getDaysLeft(campaign.deadline)
   const supporterCount = campaign.donor_count ?? 0
   const colors = CATEGORY_COLORS[campaign.category] ?? CATEGORY_COLORS['Other']
-  const emoji = CATEGORY_EMOJI[campaign.category] ?? '✨'
+  const Icon = CATEGORY_ICON[campaign.category] ?? CATEGORY_ICON['Other']
 
   return (
     <Link
@@ -41,7 +41,7 @@ export default function CampaignCard({ campaign }: CampaignCardProps) {
       <div className="p-4">
         <div className="flex items-center gap-2 mb-3">
           <span className={`inline-flex items-center gap-1 text-xs font-semibold rounded-full px-2.5 py-0.5 border ${colors.bg} ${colors.text} ${colors.border}`}>
-            {emoji} {campaign.category}
+            <Icon className="w-3 h-3" /> {campaign.category}
           </span>
           <span className="text-xs text-gray-400">South Africa</span>
         </div>

@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import { PlusCircle, TrendingUp, Heart, Users } from 'lucide-react'
+import { PlusCircle, TrendingUp, Heart, Users, CheckCircle2, XCircle } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import CampaignCard from '@/components/CampaignCard'
 import { Button } from '@/components/ui/button'
@@ -86,7 +86,7 @@ export default async function DashboardPage() {
           </div>
         ) : (
           <div className="text-center py-14 border-2 border-dashed border-gray-200 rounded-2xl bg-white">
-            <div className="text-4xl mb-3">💚</div>
+            <Heart className="w-10 h-10 text-gray-300 mx-auto mb-3" strokeWidth={1.5} />
             <p className="text-gray-500 font-medium mb-3">You have no active campaigns</p>
             <Link href="/create"><Button size="sm" className="bg-green-600 hover:bg-green-700">Start your first campaign</Button></Link>
           </div>
@@ -172,8 +172,8 @@ export default async function DashboardPage() {
               <div key={c.id} className="relative">
                 <CampaignCard campaign={c as Campaign} />
                 <div className="absolute inset-0 bg-white/40 rounded-xl flex items-end p-3 pointer-events-none">
-                  <span className={`text-xs font-bold px-2 py-1 rounded-full ${c.status === 'completed' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-600'}`}>
-                    {c.status === 'completed' ? '✓ Completed' : '✗ Cancelled'}
+                  <span className={`flex items-center gap-1 text-xs font-bold px-2 py-1 rounded-full ${c.status === 'completed' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-600'}`}>
+                    {c.status === 'completed' ? <><CheckCircle2 className="w-3 h-3" /> Completed</> : <><XCircle className="w-3 h-3" /> Cancelled</>}
                   </span>
                 </div>
               </div>

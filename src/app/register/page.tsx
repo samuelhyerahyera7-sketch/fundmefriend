@@ -149,14 +149,16 @@ export default function RegisterPage() {
           </p>
           <div className="space-y-3 text-left">
             {[
-              '✓ Create your campaign for free',
-              '✓ Share on WhatsApp instantly',
-              '✓ Receive donations directly to your bank',
-              '✓ 100% of donations go to you',
+              'Create your campaign for free',
+              'Share on WhatsApp instantly',
+              'Receive donations directly to your bank',
+              '100% of donations go to you',
             ].map(t => (
               <div key={t} className="flex items-center gap-3">
-                <span className="w-5 h-5 rounded-full bg-brand-green flex items-center justify-center text-xs font-bold shrink-0">✓</span>
-                <p className="text-sm text-blue-100">{t.slice(2)}</p>
+                <span className="w-5 h-5 rounded-full bg-brand-green flex items-center justify-center shrink-0">
+                  <Check className="w-3 h-3 text-white" />
+                </span>
+                <p className="text-sm text-blue-100">{t}</p>
               </div>
             ))}
           </div>
