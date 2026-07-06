@@ -331,6 +331,10 @@ export default function CreateCampaignPage() {
                       <span className="text-gray-900 font-medium">R {parseFloat(form.goal_amount || '0').toLocaleString('en-ZA')}</span>
                     </div>
                     <div className="flex gap-2">
+                      <span className="text-gray-400 w-20 shrink-0">Starts</span>
+                      <span className="text-gray-900">Today</span>
+                    </div>
+                    <div className="flex gap-2">
                       <span className="text-gray-400 w-20 shrink-0">Ends</span>
                       <span className="text-gray-900">{form.deadline}</span>
                     </div>

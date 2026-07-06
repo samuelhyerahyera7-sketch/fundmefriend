@@ -115,6 +115,7 @@ export default function ManageCampaignPage() {
               <span className="text-gray-400">{daysLeft} days remaining</span>
             )}
           </div>
+          <p className="text-xs text-gray-400 mt-1">Started {formatDate(campaign.created_at)}</p>
         </div>
         <Link
           href={`/campaigns/${id}`}

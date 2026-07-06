@@ -124,6 +124,7 @@ export default async function CampaignPage({ params }: Props) {
               status={campaign.status}
               campaignId={id}
               isOwner={isOwner}
+              startDate={campaign.created_at}
             />
           </div>
 
@@ -206,6 +207,10 @@ export default async function CampaignPage({ params }: Props) {
                 </span>
               )}
             </div>
+            <div className="flex items-center gap-1 text-sm text-gray-400 mb-1">
+              <Calendar className="w-3.5 h-3.5" />
+              Started {formatDate(campaign.created_at)}
+            </div>
             <div className={`flex items-center gap-1 text-sm mb-5 ${isUrgent ? 'text-red-600 font-semibold' : 'text-gray-400'}`}>
               <Calendar className="w-4 h-4" />
               {daysLeft > 0 ? `${daysLeft} day${daysLeft !== 1 ? 's' : ''} left` : 'Campaign ended'}
@@ -268,10 +273,10 @@ export default async function CampaignPage({ params }: Props) {
 }
 
 function MobileProgressCard({
-  raised, goal, percent, daysLeft, isUrgent, donorCount, status, campaignId, isOwner
+  raised, goal, percent, daysLeft, isUrgent, donorCount, status, campaignId, isOwner, startDate
 }: {
   raised: number; goal: number; percent: number; daysLeft: number; isUrgent: boolean;
-  donorCount: number; status: string; campaignId: string; isOwner: boolean;
+  donorCount: number; status: string; campaignId: string; isOwner: boolean; startDate: string;
 }) {
   return (
     <>
@@ -282,6 +287,7 @@ function MobileProgressCard({
       <div className="w-full bg-gray-100 rounded-full h-2.5 mb-3">
         <div className="bg-green-500 h-2.5 rounded-full" style={{ width: `${percent}%` }} />
       </div>
+      <p className="text-xs text-gray-400 mb-1">Started {formatDate(startDate)}</p>
       <div className="flex justify-between text-sm text-gray-500 mb-4">
         <span>{percent}% funded · {donorCount} donors</span>
         <span className={isUrgent ? 'text-red-500 font-semibold' : ''}>
