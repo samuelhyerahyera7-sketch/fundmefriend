@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { CheckCircle2, Heart } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 interface Props {
@@ -14,7 +15,7 @@ export default async function DonateSuccessPage({ searchParams }: Props) {
         {/* Animation */}
         <div className="relative inline-block mb-6">
           <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto">
-            <span className="text-5xl">🎉</span>
+            <CheckCircle2 className="w-12 h-12 text-green-600" strokeWidth={1.5} />
           </div>
         </div>
 
@@ -29,7 +30,7 @@ export default async function DonateSuccessPage({ searchParams }: Props) {
 
         {/* Share nudge */}
         <div className="bg-green-50 border border-green-100 rounded-2xl p-5 mb-6 text-left">
-          <p className="font-bold text-green-800 mb-1">💚 Want to help even more?</p>
+          <p className="font-bold text-green-800 mb-1 flex items-center gap-1.5"><Heart className="w-4 h-4" /> Want to help even more?</p>
           <p className="text-sm text-green-700 mb-4">
             Share this campaign with your friends and family. Every share could mean more donations for someone who needs it.
           </p>

@@ -15,7 +15,7 @@ export default function ShareButtons({ title, campaignId }: ShareButtonsProps) {
     ? `${window.location.origin}/campaigns/${campaignId}`
     : `/campaigns/${campaignId}`
 
-  const text = `Help me reach my fundraising goal — "${title}" on FundMeFriend 🙏`
+  const text = `Help me reach my fundraising goal — "${title}" on FundMeFriend`
 
   async function copyLink() {
     await navigator.clipboard.writeText(url)

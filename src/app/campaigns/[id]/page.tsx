@@ -7,7 +7,7 @@ import DonateForm from './DonateForm'
 import ShareButtons from '@/components/ShareButtons'
 import CampaignCard from '@/components/CampaignCard'
 import { formatCurrency, formatDate, getProgressPercent, getDaysLeft } from '@/lib/utils'
-import { CATEGORY_EMOJI, CATEGORY_COLORS } from '@/types'
+import { CATEGORY_ICON, CATEGORY_COLORS } from '@/types'
 import type { Campaign } from '@/types'
 
 interface Props { params: Promise<{ id: string }> }
@@ -45,7 +45,7 @@ export default async function CampaignPage({ params }: Props) {
   const donorCount = donations?.length ?? 0
   const isUrgent = daysLeft > 0 && daysLeft <= 7
   const colors = CATEGORY_COLORS[campaign.category] ?? CATEGORY_COLORS['Other']
-  const emoji = CATEGORY_EMOJI[campaign.category] ?? '✨'
+  const Icon = CATEGORY_ICON[campaign.category] ?? CATEGORY_ICON['Other']
 
   // Related campaigns
   const { data: related } = await supabase
@@ -79,7 +79,7 @@ export default async function CampaignPage({ params }: Props) {
           {/* Title */}
           <div>
             <span className={`inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-full border mb-3 ${colors.bg} ${colors.text} ${colors.border}`}>
-              {emoji} {campaign.category}
+              <Icon className="w-3.5 h-3.5" /> {campaign.category}
             </span>
             <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-2 leading-tight">{campaign.title}</h1>
             <div className="flex items-center gap-3 flex-wrap">
@@ -106,7 +106,7 @@ export default async function CampaignPage({ params }: Props) {
               <Image src={campaign.image_url} alt={campaign.title} fill className="object-cover" />
             ) : (
               <div className={`absolute inset-0 flex flex-col items-center justify-center gap-3 ${colors.bg}`}>
-                <span className="text-7xl">{emoji}</span>
+                <Icon className={`w-16 h-16 ${colors.text}`} strokeWidth={1.5} />
                 <p className={`text-sm font-medium ${colors.text}`}>{campaign.category}</p>
               </div>
             )}

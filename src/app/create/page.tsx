@@ -3,9 +3,9 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
-import { Loader2 } from 'lucide-react'
+import { Loader2, Check, Camera } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
-import { CATEGORIES, CATEGORY_EMOJI } from '@/types'
+import { CATEGORIES, CATEGORY_ICON } from '@/types'
 
 const minDeadline = new Date(Date.now() + 86400000).toISOString().split('T')[0]
 
@@ -38,10 +38,18 @@ export default function CreateCampaignPage() {
     setForm(f => ({ ...f, [key]: value }))
   }
 
-  function canProceed() {
-    if (step === 1) return form.title.trim().length >= 5 && form.description.trim().length >= 10 && form.category
-    if (step === 2) return form.story.trim().length >= 50 && parseFloat(form.goal_amount) >= 100 && form.deadline
-    return true
+  function getStepError(): string {
+    if (step === 1) {
+      if (form.title.trim().length < 5) return 'Please enter a title of at least 5 characters.'
+      if (!form.category) return 'Please choose a category.'
+      if (form.description.trim().length < 10) return 'Please enter a short description of at least 10 characters.'
+    }
+    if (step === 2) {
+      if (form.story.trim().length < 50) return 'Please share a bit more of your story (at least 50 characters).'
+      if (!(parseFloat(form.goal_amount) >= 100)) return 'Please set a fundraising goal of at least R100.'
+      if (!form.deadline) return 'Please choose an end date.'
+    }
+    return ''
   }
 
   const MAX_IMAGE_BYTES = 10 * 1024 * 1024
@@ -119,7 +127,7 @@ export default function CreateCampaignPage() {
                 <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0 transition-colors ${
                   done ? 'bg-brand-green text-white' : active ? 'bg-[#01224b] text-white' : 'bg-gray-100 text-gray-400'
                 }`}>
-                  {done ? '✓' : s}
+                  {done ? <Check className="w-3.5 h-3.5" /> : s}
                 </div>
                 <span className={`text-xs font-medium hidden sm:block ${active ? 'text-[#01224b]' : done ? 'text-brand-green' : 'text-gray-400'}`}>
                   {label}
@@ -180,7 +188,9 @@ export default function CreateCampaignPage() {
                   <label className="block text-sm font-bold text-gray-900 mb-1">Category</label>
                   <p className="text-xs text-gray-400 mb-3">Choose the one that fits best.</p>
                   <div className="grid grid-cols-3 gap-2">
-                    {CATEGORIES.map(cat => (
+                    {CATEGORIES.map(cat => {
+                      const Icon = CATEGORY_ICON[cat] ?? CATEGORY_ICON['Other']
+                      return (
                       <button
                         key={cat}
                         type="button"
@@ -191,10 +201,11 @@ export default function CreateCampaignPage() {
                             : 'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'
                         }`}
                       >
-                        <span className="text-lg">{CATEGORY_EMOJI[cat]}</span>
+                        <Icon className="w-5 h-5" />
                         {cat}
                       </button>
-                    ))}
+                      )
+                    })}
                   </div>
                 </div>
 
@@ -231,7 +242,7 @@ export default function CreateCampaignPage() {
                   <div className="flex justify-between mt-1">
                     {form.story.length > 0 && form.story.length < 50
                       ? <p className="text-xs text-amber-500">{50 - form.story.length} more characters needed</p>
-                      : <p className="text-xs text-brand-green">{form.story.length > 0 ? '✓ Good' : ''}</p>
+                      : <p className="text-xs text-brand-green flex items-center gap-1">{form.story.length > 0 && <><Check className="w-3 h-3" /> Good</>}</p>
                     }
                     <p className="text-xs text-gray-400">{form.story.length} chars</p>
                   </div>
@@ -290,7 +301,7 @@ export default function CreateCampaignPage() {
                     </div>
                   ) : (
                     <label className="flex flex-col items-center gap-3 cursor-pointer py-12 border-2 border-dashed border-gray-200 rounded-xl hover:border-teal-400 transition-colors">
-                      <span className="text-3xl">📷</span>
+                      <Camera className="w-8 h-8 text-gray-400" strokeWidth={1.5} />
                       <div className="text-center">
                         <p className="text-sm font-medium text-gray-700">Click to upload a photo</p>
                         <p className="text-xs text-gray-400 mt-1">JPG, PNG up to 10MB</p>
@@ -310,7 +321,10 @@ export default function CreateCampaignPage() {
                     </div>
                     <div className="flex gap-2">
                       <span className="text-gray-400 w-20 shrink-0">Category</span>
-                      <span className="text-gray-900">{CATEGORY_EMOJI[form.category]} {form.category}</span>
+                      <span className="text-gray-900 flex items-center gap-1.5">
+                        {(() => { const Icon = CATEGORY_ICON[form.category] ?? CATEGORY_ICON['Other']; return <Icon className="w-4 h-4" /> })()}
+                        {form.category}
+                      </span>
                     </div>
                     <div className="flex gap-2">
                       <span className="text-gray-400 w-20 shrink-0">Goal</span>
@@ -350,9 +364,13 @@ export default function CreateCampaignPage() {
               {step < 3 ? (
                 <button
                   type="button"
-                  onClick={() => { if (canProceed()) { setStep(s => s + 1); setError('') } }}
-                  disabled={!canProceed()}
-                  className="bg-[#01224b] text-white font-semibold px-8 py-3 rounded-full text-sm hover:bg-[#012a5e] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                  onClick={() => {
+                    const stepError = getStepError()
+                    if (stepError) { setError(stepError); return }
+                    setError('')
+                    setStep(s => s + 1)
+                  }}
+                  className="bg-[#01224b] text-white font-semibold px-8 py-3 rounded-full text-sm hover:bg-[#012a5e] transition-colors"
                 >
                   Continue
                 </button>

@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { Download, ExternalLink } from 'lucide-react'
+import { Download, ExternalLink, CheckCircle2, XCircle } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -105,11 +105,11 @@ export default function ManageCampaignPage() {
           <Link href="/dashboard" className="text-sm text-green-600 hover:underline mb-2 block">Dashboard</Link>
           <h1 className="text-xl font-extrabold text-gray-900 leading-tight">{campaign.title}</h1>
           <div className="flex items-center gap-3 mt-1 text-sm">
-            <span className={`font-semibold ${campaign.status === 'active' ? 'text-green-600' : campaign.status === 'pending_review' ? 'text-amber-600' : 'text-gray-400'}`}>
-              {campaign.status === 'active' ? '● Active'
-                : campaign.status === 'pending_review' ? '● Under review'
-                : campaign.status === 'completed' ? '✓ Completed'
-                : '✗ Cancelled'}
+            <span className={`flex items-center gap-1.5 font-semibold ${campaign.status === 'active' ? 'text-green-600' : campaign.status === 'pending_review' ? 'text-amber-600' : 'text-gray-400'}`}>
+              {campaign.status === 'active' ? <><span className="w-2 h-2 rounded-full bg-green-600" /> Active</>
+                : campaign.status === 'pending_review' ? <><span className="w-2 h-2 rounded-full bg-amber-600" /> Under review</>
+                : campaign.status === 'completed' ? <><CheckCircle2 className="w-4 h-4" /> Completed</>
+                : <><XCircle className="w-4 h-4" /> Cancelled</>}
             </span>
             {daysLeft > 0 && campaign.status === 'active' && (
               <span className="text-gray-400">{daysLeft} days remaining</span>

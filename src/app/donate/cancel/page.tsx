@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { XCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 interface Props {
@@ -12,7 +13,7 @@ export default async function DonateCancelPage({ searchParams }: Props) {
     <div className="min-h-[75vh] flex items-center justify-center px-4 py-12">
       <div className="text-center max-w-sm">
         <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-5">
-          <span className="text-4xl">😕</span>
+          <XCircle className="w-9 h-9 text-gray-400" strokeWidth={1.5} />
         </div>
         <h1 className="text-2xl font-bold text-gray-900 mb-2">Payment cancelled</h1>
         <p className="text-gray-500 mb-8 leading-relaxed">

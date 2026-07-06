@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
+import { ImageOff } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { formatCurrency, formatDate } from '@/lib/utils'
 import ModerationActions from './ModerationActions'
@@ -40,7 +41,9 @@ export default async function AdminCampaignsPage() {
                   <Image src={c.image_url} alt={c.title} fill className="object-cover" />
                 </div>
               ) : (
-                <div className="w-28 h-20 rounded-lg shrink-0 bg-gray-100 flex items-center justify-center text-2xl">📷</div>
+                <div className="w-28 h-20 rounded-lg shrink-0 bg-gray-100 flex items-center justify-center">
+                  <ImageOff className="w-6 h-6 text-gray-300" />
+                </div>
               )}
               <div className="flex-1 min-w-0">
                 <div className="flex items-start justify-between gap-4">
