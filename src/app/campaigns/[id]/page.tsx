@@ -1,9 +1,9 @@
 import { notFound } from 'next/navigation'
-import Image from 'next/image'
 import Link from 'next/link'
-import { Calendar, Users } from 'lucide-react'
+import { Calendar, Users, MapPin, HandCoins } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import DonateForm from './DonateForm'
+import Gallery from './Gallery'
 import ShareButtons from '@/components/ShareButtons'
 import CampaignCard from '@/components/CampaignCard'
 import { formatCurrency, formatDate, getProgressPercent, getDaysLeft } from '@/lib/utils'
@@ -42,10 +42,15 @@ export default async function CampaignPage({ params }: Props) {
   const percent = getProgressPercent(campaign.raised_amount, campaign.goal_amount)
   const daysLeft = getDaysLeft(campaign.deadline)
   const isOwner = user?.id === campaign.user_id
-  const donorCount = donations?.length ?? 0
-  const isUrgent = daysLeft > 0 && daysLeft <= 7
+  const donationCount = donations?.length ?? 0
+  const uniqueDonorIds = new Set((donations ?? []).map(d => d.donor_id).filter(Boolean))
+  const guestDonationCount = (donations ?? []).filter(d => !d.donor_id).length
+  const uniqueDonorCount = uniqueDonorIds.size + guestDonationCount
+  const offlineTotal = (donations ?? []).filter(d => d.is_offline).reduce((sum, d) => sum + d.amount, 0)
+  const isUrgent = daysLeft !== null && daysLeft > 0 && daysLeft <= 7
   const colors = CATEGORY_COLORS[campaign.category] ?? CATEGORY_COLORS['Other']
   const Icon = CATEGORY_ICON[campaign.category] ?? CATEGORY_ICON['Other']
+  const galleryImages = [campaign.image_url, ...(campaign.image_urls ?? [])].filter((u): u is string => !!u)
 
   // Related campaigns
   const { data: related } = await supabase
@@ -88,12 +93,21 @@ export default async function CampaignPage({ params }: Props) {
               </p>
               <span className="text-gray-300">·</span>
               <p className="text-gray-400 text-sm">{formatDate(campaign.created_at)}</p>
-              {donorCount > 0 && (
+              {campaign.location && (
+                <>
+                  <span className="text-gray-300">·</span>
+                  <p className="text-gray-500 text-sm flex items-center gap-1">
+                    <MapPin className="w-3.5 h-3.5" />
+                    {campaign.location}
+                  </p>
+                </>
+              )}
+              {uniqueDonorCount > 0 && (
                 <>
                   <span className="text-gray-300">·</span>
                   <p className="text-gray-500 text-sm flex items-center gap-1">
                     <Users className="w-3.5 h-3.5" />
-                    {donorCount} donor{donorCount !== 1 ? 's' : ''}
+                    {uniqueDonorCount} donor{uniqueDonorCount !== 1 ? 's' : ''}
                   </p>
                 </>
               )}
@@ -101,16 +115,16 @@ export default async function CampaignPage({ params }: Props) {
           </div>
 
           {/* Image */}
-          <div className="relative aspect-video rounded-2xl overflow-hidden bg-gray-100 shadow-sm">
-            {campaign.image_url ? (
-              <Image src={campaign.image_url} alt={campaign.title} fill className="object-cover" />
-            ) : (
+          <Gallery
+            images={galleryImages}
+            alt={campaign.title}
+            fallback={
               <div className={`absolute inset-0 flex flex-col items-center justify-center gap-3 ${colors.bg}`}>
                 <Icon className={`w-16 h-16 ${colors.text}`} strokeWidth={1.5} />
                 <p className={`text-sm font-medium ${colors.text}`}>{campaign.category}</p>
               </div>
-            )}
-          </div>
+            }
+          />
 
           {/* Progress — shown on mobile above story */}
           <div className="lg:hidden bg-white rounded-2xl border border-gray-200 p-5">
@@ -120,7 +134,7 @@ export default async function CampaignPage({ params }: Props) {
               percent={percent}
               daysLeft={daysLeft}
               isUrgent={isUrgent}
-              donorCount={donorCount}
+              donorCount={uniqueDonorCount}
               status={campaign.status}
               campaignId={id}
               isOwner={isOwner}
@@ -162,7 +176,7 @@ export default async function CampaignPage({ params }: Props) {
           {donations && donations.length > 0 && (
             <div className="bg-white rounded-2xl border border-gray-200 p-6">
               <h2 className="font-bold text-gray-900 mb-5 text-lg">
-                {donorCount} donation{donorCount !== 1 ? 's' : ''}
+                {donationCount} donation{donationCount !== 1 ? 's' : ''}
               </h2>
               <div className="space-y-4">
                 {donations.map(d => (
@@ -200,25 +214,31 @@ export default async function CampaignPage({ params }: Props) {
             </div>
             <div className="flex justify-between text-sm text-gray-500 mb-1">
               <span className="font-semibold text-gray-700">{percent}% funded</span>
-              {donorCount > 0 && (
+              {uniqueDonorCount > 0 && (
                 <span className="flex items-center gap-1">
                   <Users className="w-3.5 h-3.5" />
-                  {donorCount} donor{donorCount !== 1 ? 's' : ''}
+                  {uniqueDonorCount} donor{uniqueDonorCount !== 1 ? 's' : ''}
                 </span>
               )}
             </div>
+            {offlineTotal > 0 && (
+              <div className="flex items-center gap-1 text-xs text-gray-400 mb-1">
+                <HandCoins className="w-3.5 h-3.5" />
+                {formatCurrency(offlineTotal)} from offline donations
+              </div>
+            )}
             <div className="flex items-center gap-1 text-sm text-gray-400 mb-1">
               <Calendar className="w-3.5 h-3.5" />
               Started {formatDate(campaign.created_at)}
             </div>
             <div className={`flex items-center gap-1 text-sm mb-5 ${isUrgent ? 'text-red-600 font-semibold' : 'text-gray-400'}`}>
               <Calendar className="w-4 h-4" />
-              {daysLeft > 0 ? `${daysLeft} day${daysLeft !== 1 ? 's' : ''} left` : 'Campaign ended'}
+              {daysLeft === null ? 'No fixed end date' : daysLeft > 0 ? `${daysLeft} day${daysLeft !== 1 ? 's' : ''} left` : 'Campaign ended'}
               {isUrgent && ' — ending soon!'}
             </div>
 
             {/* Donate */}
-            {campaign.status === 'active' && daysLeft > 0 && (
+            {campaign.status === 'active' && (daysLeft === null || daysLeft > 0) && (
               <div className="mb-5">
                 <DonateForm campaignId={campaign.id} />
               </div>
@@ -229,7 +249,7 @@ export default async function CampaignPage({ params }: Props) {
                 This fundraiser is awaiting review.
               </div>
             )}
-            {(campaign.status === 'completed' || campaign.status === 'cancelled' || (campaign.status === 'active' && daysLeft <= 0)) && (
+            {(campaign.status === 'completed' || campaign.status === 'cancelled' || (campaign.status === 'active' && daysLeft !== null && daysLeft <= 0)) && (
               <div className="mb-5 p-3 bg-gray-50 rounded-xl text-sm text-gray-500 text-center">
                 This campaign has ended.
               </div>
@@ -275,7 +295,7 @@ export default async function CampaignPage({ params }: Props) {
 function MobileProgressCard({
   raised, goal, percent, daysLeft, isUrgent, donorCount, status, campaignId, isOwner, startDate
 }: {
-  raised: number; goal: number; percent: number; daysLeft: number; isUrgent: boolean;
+  raised: number; goal: number; percent: number; daysLeft: number | null; isUrgent: boolean;
   donorCount: number; status: string; campaignId: string; isOwner: boolean; startDate: string;
 }) {
   return (
@@ -291,10 +311,10 @@ function MobileProgressCard({
       <div className="flex justify-between text-sm text-gray-500 mb-4">
         <span>{percent}% funded · {donorCount} donors</span>
         <span className={isUrgent ? 'text-red-500 font-semibold' : ''}>
-          {daysLeft > 0 ? `${daysLeft} days left` : 'Ended'}
+          {daysLeft === null ? 'Open-ended' : daysLeft > 0 ? `${daysLeft} days left` : 'Ended'}
         </span>
       </div>
-      {status === 'active' && daysLeft > 0 && (
+      {status === 'active' && (daysLeft === null || daysLeft > 0) && (
         <DonateForm campaignId={campaignId} />
       )}
       {isOwner && (

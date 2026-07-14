@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
-import { Loader2, Check, Camera } from 'lucide-react'
+import { Loader2, Check, Camera, X, Plus } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { CATEGORIES, CATEGORY_ICON } from '@/types'
 
@@ -24,6 +24,9 @@ export default function CreateCampaignPage() {
   const [error, setError] = useState('')
   const [imageFile, setImageFile] = useState<File | null>(null)
   const [imagePreview, setImagePreview] = useState<string | null>(null)
+  const [galleryFiles, setGalleryFiles] = useState<File[]>([])
+  const [galleryPreviews, setGalleryPreviews] = useState<string[]>([])
+  const [noEndDate, setNoEndDate] = useState(false)
 
   const [form, setForm] = useState({
     title: '',
@@ -32,6 +35,7 @@ export default function CreateCampaignPage() {
     story: '',
     goal_amount: '',
     deadline: '',
+    location: '',
   })
 
   function set(key: string, value: string) {
@@ -47,7 +51,7 @@ export default function CreateCampaignPage() {
     if (step === 2) {
       if (form.story.trim().length < 50) return 'Please share a bit more of your story (at least 50 characters).'
       if (!(parseFloat(form.goal_amount) >= 100)) return 'Please set a fundraising goal of at least R100.'
-      if (!form.deadline) return 'Please choose an end date.'
+      if (!noEndDate && !form.deadline) return 'Please choose an end date, or select "No fixed end date".'
     }
     return ''
   }
@@ -73,6 +77,34 @@ export default function CreateCampaignPage() {
     setImagePreview(URL.createObjectURL(file))
   }
 
+  const MAX_GALLERY_PHOTOS = 5
+
+  function handleGalleryChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(e.target.files ?? [])
+    e.target.value = ''
+    if (files.length === 0) return
+
+    const room = MAX_GALLERY_PHOTOS - galleryFiles.length
+    if (room <= 0) { setError(`You can add up to ${MAX_GALLERY_PHOTOS} extra photos.`); return }
+
+    const accepted: File[] = []
+    for (const file of files.slice(0, room)) {
+      if (!ALLOWED_IMAGE_TYPES.includes(file.type)) { setError('Please upload JPG, PNG, or WEBP images.'); continue }
+      if (file.size > MAX_IMAGE_BYTES) { setError('Each image must be under 10MB.'); continue }
+      accepted.push(file)
+    }
+    if (accepted.length === 0) return
+
+    setError('')
+    setGalleryFiles(f => [...f, ...accepted])
+    setGalleryPreviews(p => [...p, ...accepted.map(f => URL.createObjectURL(f))])
+  }
+
+  function removeGalleryPhoto(index: number) {
+    setGalleryFiles(f => f.filter((_, i) => i !== index))
+    setGalleryPreviews(p => p.filter((_, i) => i !== index))
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setError('')
@@ -93,6 +125,16 @@ export default function CreateCampaignPage() {
       image_url = urlData.publicUrl
     }
 
+    const image_urls: string[] = []
+    for (const [i, file] of galleryFiles.entries()) {
+      const ext = file.name.split('.').pop()
+      const path = `campaigns/${user.id}/${Date.now()}-${i}.${ext}`
+      const { error: uploadErr } = await supabase.storage.from('campaign-images').upload(path, file)
+      if (uploadErr) { setError('Photo upload failed: ' + uploadErr.message); setLoading(false); return }
+      const { data: urlData } = supabase.storage.from('campaign-images').getPublicUrl(path)
+      image_urls.push(urlData.publicUrl)
+    }
+
     const { data, error: insertErr } = await supabase
       .from('campaigns')
       .insert({
@@ -102,8 +144,10 @@ export default function CreateCampaignPage() {
         story: form.story,
         goal_amount: parseFloat(form.goal_amount),
         category: form.category,
-        deadline: form.deadline,
+        deadline: noEndDate ? null : form.deadline,
+        location: form.location.trim() || null,
         image_url,
+        image_urls,
       })
       .select()
       .single()
@@ -222,6 +266,19 @@ export default function CreateCampaignPage() {
                     className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-transparent"
                   />
                 </div>
+
+                <div>
+                  <label className="block text-sm font-bold text-gray-900 mb-1">Location <span className="font-normal text-gray-400">— optional</span></label>
+                  <p className="text-xs text-gray-400 mb-2">City and country, e.g. Gqeberha, South Africa.</p>
+                  <input
+                    type="text"
+                    placeholder="e.g. Cape Town, South Africa"
+                    value={form.location}
+                    onChange={e => set('location', e.target.value)}
+                    maxLength={80}
+                    className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-transparent"
+                  />
+                </div>
               </>
             )}
 
@@ -273,9 +330,19 @@ export default function CreateCampaignPage() {
                     min={minDeadline}
                     value={form.deadline}
                     onChange={e => set('deadline', e.target.value)}
-                    required
-                    className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-transparent"
+                    required={!noEndDate}
+                    disabled={noEndDate}
+                    className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-transparent disabled:bg-gray-50 disabled:text-gray-400"
                   />
+                  <label className="flex items-center gap-2 mt-2.5 cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      checked={noEndDate}
+                      onChange={e => setNoEndDate(e.target.checked)}
+                      className="w-4 h-4 rounded border-gray-300 text-teal-500 focus:ring-teal-400"
+                    />
+                    <span className="text-xs text-gray-500">No fixed end date — I&apos;ll close it myself when ready</span>
+                  </label>
                 </div>
               </>
             )}
@@ -311,6 +378,31 @@ export default function CreateCampaignPage() {
                   )}
                 </div>
 
+                <div>
+                  <label className="block text-sm font-bold text-gray-900 mb-1">More photos <span className="font-normal text-gray-400">— optional, up to {MAX_GALLERY_PHOTOS}</span></label>
+                  <p className="text-xs text-gray-400 mb-3">Shown as a gallery on your campaign page.</p>
+                  <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
+                    {galleryPreviews.map((src, i) => (
+                      <div key={src} className="relative aspect-square rounded-lg overflow-hidden">
+                        <Image src={src} alt={`Extra photo ${i + 1}`} fill unoptimized className="object-cover" />
+                        <button
+                          type="button"
+                          onClick={() => removeGalleryPhoto(i)}
+                          className="absolute top-1 right-1 w-5 h-5 rounded-full bg-black/60 text-white flex items-center justify-center hover:bg-black/80"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      </div>
+                    ))}
+                    {galleryFiles.length < MAX_GALLERY_PHOTOS && (
+                      <label className="aspect-square rounded-lg border-2 border-dashed border-gray-200 hover:border-teal-400 transition-colors flex items-center justify-center cursor-pointer">
+                        <Plus className="w-5 h-5 text-gray-400" />
+                        <input type="file" accept="image/*" multiple onChange={handleGalleryChange} className="hidden" />
+                      </label>
+                    )}
+                  </div>
+                </div>
+
                 {/* Review summary */}
                 <div className="bg-gray-50 rounded-xl p-4 space-y-3">
                   <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Review your fundraiser</p>
@@ -336,8 +428,14 @@ export default function CreateCampaignPage() {
                     </div>
                     <div className="flex gap-2">
                       <span className="text-gray-400 w-20 shrink-0">Ends</span>
-                      <span className="text-gray-900">{form.deadline}</span>
+                      <span className="text-gray-900">{noEndDate ? 'No fixed end date' : form.deadline}</span>
                     </div>
+                    {form.location && (
+                      <div className="flex gap-2">
+                        <span className="text-gray-400 w-20 shrink-0">Location</span>
+                        <span className="text-gray-900">{form.location}</span>
+                      </div>
+                    )}
                   </div>
                 </div>
 
