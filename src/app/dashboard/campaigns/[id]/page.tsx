@@ -1,9 +1,9 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { Download, ExternalLink, CheckCircle2, XCircle } from 'lucide-react'
+import { Download, ExternalLink, CheckCircle2, XCircle, HandCoins, Loader2 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -25,18 +25,55 @@ export default function ManageCampaignPage() {
   const [error, setError] = useState('')
   const [successMsg, setSuccessMsg] = useState('')
 
-  useEffect(() => {
+  const [offlineAmount, setOfflineAmount] = useState('')
+  const [offlineDonorName, setOfflineDonorName] = useState('')
+  const [offlineAnonymous, setOfflineAnonymous] = useState(false)
+  const [loggingOffline, setLoggingOffline] = useState(false)
+  const [offlineError, setOfflineError] = useState('')
+
+  const fetchData = useCallback(() => {
     const supabase = createClient()
-    Promise.all([
+    return Promise.all([
       supabase.from('campaigns').select('*').eq('id', id).single(),
       supabase.from('donations').select('*, profiles(full_name)').eq('campaign_id', id).eq('payment_status', 'complete').order('created_at', { ascending: false }),
       supabase.from('campaign_updates').select('*').eq('campaign_id', id).order('created_at', { ascending: false }),
-    ]).then(([{ data: c }, { data: d }, { data: u }]) => {
-      if (c) setCampaign(c as Campaign)
-      if (d) setDonations(d as Donation[])
-      if (u) setUpdates(u as CampaignUpdate[])
-    })
+    ]).then(([{ data: c }, { data: d }, { data: u }]) => ({ c, d, u }))
   }, [id])
+
+  function applyData({ c, d, u }: { c: unknown; d: unknown; u: unknown }) {
+    if (c) setCampaign(c as Campaign)
+    if (d) setDonations(d as Donation[])
+    if (u) setUpdates(u as CampaignUpdate[])
+  }
+
+  useEffect(() => { fetchData().then(applyData) }, [fetchData])
+
+  async function logOfflineDonation(e: React.FormEvent) {
+    e.preventDefault()
+    setOfflineError('')
+    setLoggingOffline(true)
+    const res = await fetch('/api/campaigns/offline-donation', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        campaignId: id,
+        amount: offlineAmount,
+        donorName: offlineDonorName || undefined,
+        isAnonymous: offlineAnonymous,
+      }),
+    })
+    if (!res.ok) {
+      const { error: err } = await res.json().catch(() => ({ error: 'Something went wrong' }))
+      setOfflineError(err)
+      setLoggingOffline(false)
+      return
+    }
+    setOfflineAmount('')
+    setOfflineDonorName('')
+    setOfflineAnonymous(false)
+    await fetchData().then(applyData)
+    setLoggingOffline(false)
+  }
 
   async function postUpdate(e: React.FormEvent) {
     e.preventDefault()
@@ -96,6 +133,10 @@ export default function ManageCampaignPage() {
 
   const percent = getProgressPercent(campaign.raised_amount, campaign.goal_amount)
   const daysLeft = getDaysLeft(campaign.deadline)
+  const uniqueDonorIds = new Set(donations.map(d => d.donor_id).filter(Boolean))
+  const guestDonationCount = donations.filter(d => !d.donor_id).length
+  const uniqueDonorCount = uniqueDonorIds.size + guestDonationCount
+  const offlineTotal = donations.filter(d => d.is_offline).reduce((sum, d) => sum + d.amount, 0)
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-10 space-y-6">
@@ -111,8 +152,10 @@ export default function ManageCampaignPage() {
                 : campaign.status === 'completed' ? <><CheckCircle2 className="w-4 h-4" /> Completed</>
                 : <><XCircle className="w-4 h-4" /> Cancelled</>}
             </span>
-            {daysLeft > 0 && campaign.status === 'active' && (
-              <span className="text-gray-400">{daysLeft} days remaining</span>
+            {campaign.status === 'active' && (
+              daysLeft === null
+                ? <span className="text-gray-400">No fixed end date</span>
+                : daysLeft > 0 && <span className="text-gray-400">{daysLeft} days remaining</span>
             )}
           </div>
           <p className="text-xs text-gray-400 mt-1">Started {formatDate(campaign.created_at)}</p>
@@ -138,13 +181,18 @@ export default function ManageCampaignPage() {
             <p className="text-xs text-gray-500">of {formatCurrency(campaign.goal_amount)}</p>
           </div>
           <div>
-            <p className="text-2xl font-extrabold text-gray-900">{donations.length}</p>
+            <p className="text-2xl font-extrabold text-gray-900">{uniqueDonorCount}</p>
             <p className="text-xs text-gray-500">Donors</p>
           </div>
         </div>
-        <div className="w-full bg-gray-100 rounded-full h-2.5 overflow-hidden">
+        <div className="w-full bg-gray-100 rounded-full h-2.5 overflow-hidden mb-2">
           <div className="bg-green-500 h-2.5 rounded-full" style={{ width: `${percent}%` }} />
         </div>
+        {offlineTotal > 0 && (
+          <p className="text-xs text-gray-400 flex items-center gap-1">
+            <HandCoins className="w-3.5 h-3.5" /> {formatCurrency(offlineTotal)} of that was logged as offline donations
+          </p>
+        )}
       </div>
 
       {/* Share */}
@@ -174,7 +222,12 @@ export default function ManageCampaignPage() {
                     {d.is_anonymous ? '?' : (d.profiles?.full_name?.[0] ?? 'F')}
                   </div>
                   <div className="min-w-0">
-                    <p className="text-sm font-medium text-gray-800">{d.is_anonymous ? 'Anonymous' : (d.profiles?.full_name ?? 'Friend')}</p>
+                    <p className="text-sm font-medium text-gray-800 flex items-center gap-1.5">
+                      {d.is_anonymous ? 'Anonymous' : (d.profiles?.full_name ?? 'Friend')}
+                      {d.is_offline && (
+                        <span className="text-[10px] font-semibold uppercase tracking-wide bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded-full">Offline</span>
+                      )}
+                    </p>
                     <p className="text-xs text-gray-400">{formatDate(d.created_at)}</p>
                     {d.message && <p className="text-xs text-gray-500 italic truncate">&ldquo;{d.message}&rdquo;</p>}
                   </div>
@@ -183,6 +236,47 @@ export default function ManageCampaignPage() {
               </div>
             ))}
           </div>
+        </div>
+      )}
+
+      {/* Log offline donation */}
+      {campaign.status === 'active' && (
+        <div className="bg-white rounded-2xl border border-gray-200 p-6">
+          <h2 className="font-bold text-gray-900 mb-1 flex items-center gap-2"><HandCoins className="w-4 h-4 text-gray-400" /> Log an offline donation</h2>
+          <p className="text-sm text-gray-500 mb-4">Received cash or an EFT outside the platform? Add it here so it counts toward your goal.</p>
+          <form onSubmit={logOfflineDonation} className="space-y-3">
+            <div className="relative">
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 text-sm font-semibold">R</span>
+              <Input
+                type="number"
+                min="5"
+                placeholder="Amount"
+                value={offlineAmount}
+                onChange={e => setOfflineAmount(e.target.value)}
+                required
+                className="pl-9"
+              />
+            </div>
+            <Input
+              placeholder="Donor name (optional)"
+              value={offlineDonorName}
+              onChange={e => setOfflineDonorName(e.target.value)}
+              disabled={offlineAnonymous}
+            />
+            <label className="flex items-center gap-2 cursor-pointer select-none">
+              <input
+                type="checkbox"
+                checked={offlineAnonymous}
+                onChange={e => setOfflineAnonymous(e.target.checked)}
+                className="w-4 h-4 rounded border-gray-300 text-teal-500 focus:ring-teal-400"
+              />
+              <span className="text-sm text-gray-600">Show as anonymous</span>
+            </label>
+            {offlineError && <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{offlineError}</p>}
+            <Button type="submit" size="sm" disabled={loggingOffline} className="bg-gray-800 hover:bg-gray-900">
+              {loggingOffline ? <span className="flex items-center gap-2"><Loader2 className="w-4 h-4 animate-spin" /> Logging...</span> : 'Log donation'}
+            </Button>
+          </form>
         </div>
       )}
 

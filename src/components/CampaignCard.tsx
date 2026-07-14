@@ -43,7 +43,7 @@ export default function CampaignCard({ campaign }: CampaignCardProps) {
           <span className={`inline-flex items-center gap-1 text-xs font-semibold rounded-full px-2.5 py-0.5 border ${colors.bg} ${colors.text} ${colors.border}`}>
             <Icon className="w-3 h-3" /> {campaign.category}
           </span>
-          <span className="text-xs text-gray-400">South Africa</span>
+          <span className="text-xs text-gray-400">{campaign.location || 'South Africa'}</span>
         </div>
 
         <h3 className="font-bold text-gray-900 leading-snug mb-3 line-clamp-2 text-[15px]">
@@ -65,7 +65,7 @@ export default function CampaignCard({ campaign }: CampaignCardProps) {
 
         <p className="text-xs text-gray-400">
           {supporterCount > 0 ? `${supporterCount} supporters · ` : ''}
-          {daysLeft > 0 ? `${daysLeft} days left` : 'Ended'}
+          {daysLeft === null ? 'Open-ended' : daysLeft > 0 ? `${daysLeft} days left` : 'Ended'}
         </p>
       </div>
     </Link>

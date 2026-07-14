@@ -17,7 +17,8 @@ export function getProgressPercent(raised: number, goal: number) {
   return Math.min(Math.round((raised / goal) * 100), 100)
 }
 
-export function getDaysLeft(deadline: string) {
+export function getDaysLeft(deadline: string | null) {
+  if (!deadline) return null
   const diff = new Date(deadline).getTime() - Date.now()
   return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)))
 }

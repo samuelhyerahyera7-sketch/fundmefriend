@@ -11,7 +11,9 @@ export type Campaign = {
   raised_amount: number
   category: string
   image_url: string | null
-  deadline: string
+  image_urls: string[]
+  location: string | null
+  deadline: string | null
   status: 'pending_review' | 'active' | 'completed' | 'cancelled'
   created_at: string
   profiles?: Profile
@@ -22,8 +24,10 @@ export type Donation = {
   campaign_id: string
   donor_id: string | null
   amount: number
+  tip_amount: number
   message: string | null
   is_anonymous: boolean
+  is_offline: boolean
   payment_status: 'pending' | 'complete' | 'cancelled' | 'error'
   payment_reference: string
   created_at: string

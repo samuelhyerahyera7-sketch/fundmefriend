@@ -20,11 +20,13 @@ export default function DonateForm({ campaignId }: { campaignId: string }) {
   const [name, setName] = useState('')
   const [message, setMessage] = useState('')
   const [isAnonymous, setIsAnonymous] = useState(false)
+  const [tipPercent, setTipPercent] = useState<number>(10)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
   const amount = selectedPreset ?? (parseFloat(customAmount) || 0)
   const isValidAmount = amount >= 5
+  const tipAmount = Math.round(amount * tipPercent) / 100
 
   function handlePreset(val: number) {
     setSelectedPreset(val)
@@ -51,6 +53,7 @@ export default function DonateForm({ campaignId }: { campaignId: string }) {
       body: JSON.stringify({
         campaignId,
         amount,
+        tipAmount,
         message: message.trim() || null,
         isAnonymous,
         donorId: user?.id ?? null,
@@ -145,6 +148,34 @@ export default function DonateForm({ campaignId }: { campaignId: string }) {
         <span className="text-xl font-extrabold text-[#01224b]">R{amount.toLocaleString('en-ZA')}</span>
       </div>
 
+      {/* Optional tip */}
+      <div>
+        <label className="block text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">
+          Support FundMeFriend <span className="font-normal normal-case">— optional tip, 0% platform fee</span>
+        </label>
+        <div className="grid grid-cols-4 gap-2">
+          {[0, 10, 15, 20].map(pct => (
+            <button
+              key={pct}
+              type="button"
+              onClick={() => setTipPercent(pct)}
+              className={`py-2 rounded-lg text-xs font-bold border-2 transition-all ${
+                tipPercent === pct
+                  ? 'bg-[#01224b] text-white border-[#01224b]'
+                  : 'border-gray-200 text-gray-600 hover:border-gray-300 bg-white'
+              }`}
+            >
+              {pct === 0 ? 'No tip' : `${pct}%`}
+            </button>
+          ))}
+        </div>
+        {tipAmount > 0 && (
+          <p className="text-xs text-gray-400 mt-1.5">
+            R{tipAmount.toLocaleString('en-ZA')} tip · Total R{(amount + tipAmount).toLocaleString('en-ZA')}
+          </p>
+        )}
+      </div>
+
       {/* Name field */}
       {!isAnonymous && (
         <div>
@@ -205,7 +236,7 @@ export default function DonateForm({ campaignId }: { campaignId: string }) {
             <Loader2 className="w-4 h-4 animate-spin" /> Redirecting to payment...
           </span>
         ) : (
-          `Donate R${amount.toLocaleString('en-ZA')}`
+          `Donate R${(amount + tipAmount).toLocaleString('en-ZA')}`
         )}
       </button>
 

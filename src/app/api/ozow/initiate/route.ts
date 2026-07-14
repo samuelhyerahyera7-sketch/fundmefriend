@@ -14,10 +14,12 @@ export async function POST(req: NextRequest) {
     process.env.SUPABASE_SERVICE_ROLE_KEY!
   )
 
-  const { campaignId, amount, message, isAnonymous, donorId, donorEmail } = await req.json()
+  const { campaignId, amount, tipAmount, message, isAnonymous, donorId, donorEmail } = await req.json()
 
   const num = parseFloat(amount)
   if (!num || num < 5) return NextResponse.json({ error: 'Minimum R5' }, { status: 400 })
+
+  const tip = Math.max(0, parseFloat(tipAmount) || 0)
 
   if (!campaignId) return NextResponse.json({ error: 'Missing campaignId' }, { status: 400 })
 
@@ -33,7 +35,7 @@ export async function POST(req: NextRequest) {
   if (campaign.status !== 'active') {
     return NextResponse.json({ error: 'This fundraiser is no longer accepting donations' }, { status: 400 })
   }
-  if (new Date(campaign.deadline) < new Date()) {
+  if (campaign.deadline && new Date(campaign.deadline) < new Date()) {
     return NextResponse.json({ error: 'This fundraiser has ended' }, { status: 400 })
   }
 
@@ -43,6 +45,7 @@ export async function POST(req: NextRequest) {
     campaign_id: campaignId,
     donor_id: donorId ?? null,
     amount: num,
+    tip_amount: tip,
     message: message || null,
     is_anonymous: isAnonymous,
     payment_status: 'pending',
@@ -52,7 +55,7 @@ export async function POST(req: NextRequest) {
   if (dbErr) return NextResponse.json({ error: dbErr.message }, { status: 500 })
 
   const payload = buildOzowPayload({
-    amount: num,
+    amount: num + tip,
     reference,
     campaignId,
     donorEmail: donorEmail ?? 'guest@fundmefriend.co.za',
