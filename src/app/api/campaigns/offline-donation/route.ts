@@ -41,6 +41,7 @@ export async function POST(req: NextRequest) {
       payment_status: 'pending',
       payment_reference: reference,
       is_offline: true,
+      payment_method: 'offline',
     })
     .select()
     .single()

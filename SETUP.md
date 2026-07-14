@@ -7,7 +7,7 @@ A full crowdfunding platform with:
 - Browse & search campaigns by category
 - Create campaign (with photo upload)
 - Campaign detail page with progress bar & donor list
-- Donation flow via Ozow instant EFT
+- Donation flow via Ozow instant EFT (ZAR) or PayPal (USD, international donors)
 - User registration & login (Supabase Auth)
 - Dashboard: my campaigns + my donations
 - Campaign management: post updates, view donors, cancel campaign
@@ -26,7 +26,7 @@ A full crowdfunding platform with:
    - **anon/public key** → `NEXT_PUBLIC_SUPABASE_ANON_KEY`
    - **service_role key** → `SUPABASE_SERVICE_ROLE_KEY`
 
-5. Go to **SQL Editor** and run the migrations in `supabase/migrations/` **in order** (001, then 002, then 003)
+5. Go to **SQL Editor** and run the migrations in `supabase/migrations/` **in order** (001 through 005)
 
 6. New fundraisers now start as `pending_review` and only go public once approved. Make your own account an admin so you can approve campaigns at `/admin/campaigns`:
    ```sql
@@ -53,7 +53,21 @@ A full crowdfunding platform with:
 
 ---
 
-## Step 3 — Fill in .env.local
+## Step 3 — PayPal Setup (for international USD donations)
+
+1. Log into your PayPal Business account at https://developer.paypal.com
+2. Go to **Apps & Credentials**, create (or use) an app under your business account
+3. Copy:
+   - **Client ID** → both `NEXT_PUBLIC_PAYPAL_CLIENT_ID` and `PAYPAL_CLIENT_ID`
+   - **Secret** → `PAYPAL_CLIENT_SECRET`
+4. While testing, leave `PAYPAL_ENV` unset or set to `sandbox` and use Sandbox app credentials from the same dashboard. Set `PAYPAL_ENV=live` with your live app credentials once you're ready to accept real payments.
+5. (Optional) Set `USD_TO_ZAR_RATE` to override the fallback exchange rate used if the live rate lookup fails — otherwise it defaults to a fixed estimate.
+
+> PayPal donations are converted to their ZAR-equivalent using a live exchange rate at donation time so campaign progress stays accurate — the platform account receives USD via PayPal regardless.
+
+---
+
+## Step 4 — Fill in .env.local
 
 Open `.env.local` and replace all placeholder values:
 
@@ -67,11 +81,16 @@ NEXT_PUBLIC_SITE_URL=http://localhost:3000
 OZOW_SITE_CODE=your_site_code
 OZOW_PRIVATE_KEY=your_private_key
 OZOW_API_KEY=your_api_key
+
+NEXT_PUBLIC_PAYPAL_CLIENT_ID=your_paypal_client_id
+PAYPAL_CLIENT_ID=your_paypal_client_id
+PAYPAL_CLIENT_SECRET=your_paypal_client_secret
+PAYPAL_ENV=sandbox
 ```
 
 ---
 
-## Step 4 — Run locally
+## Step 5 — Run locally
 
 ```bash
 npm run dev
@@ -81,13 +100,14 @@ Open http://localhost:3000
 
 ---
 
-## Step 5 — Deploy to Vercel (free)
+## Step 6 — Deploy to Vercel (free)
 
 1. Push the project to GitHub
 2. Go to https://vercel.com and import the repo
 3. Add all environment variables from `.env.local`
 4. Change `NEXT_PUBLIC_SITE_URL` to your Vercel domain
 5. Update Ozow Notify URL to your Vercel domain
+6. When ready to accept real PayPal payments, switch to live PayPal app credentials and set `PAYPAL_ENV=live`
 
 ---
 

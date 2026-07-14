@@ -25,6 +25,9 @@ export type Donation = {
   donor_id: string | null
   amount: number
   tip_amount: number
+  currency: string
+  original_amount: number | null
+  payment_method: 'ozow' | 'paypal' | 'offline'
   message: string | null
   is_anonymous: boolean
   is_offline: boolean
