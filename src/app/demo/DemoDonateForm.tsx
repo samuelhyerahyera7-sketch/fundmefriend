@@ -207,9 +207,9 @@ export default function DemoDonateForm() {
           role="switch"
           aria-checked={isAnonymous}
           onClick={() => setIsAnonymous(v => !v)}
-          className={`relative shrink-0 w-12 h-7 rounded-full transition-all duration-300 ease-out active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 ${
+          className={`relative shrink-0 w-12 h-7 rounded-full transition-all duration-300 ease-out active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#01224b] ${
             isAnonymous
-              ? 'bg-gradient-to-r from-blue-500 to-blue-600 shadow-[0_0_0_1px_rgba(37,99,235,0.4),0_2px_8px_rgba(37,99,235,0.45)]'
+              ? 'bg-gradient-to-r from-[#01224b] to-[#012a5e] shadow-[0_0_0_1px_rgba(1,34,75,0.4),0_2px_8px_rgba(1,34,75,0.5)]'
               : 'bg-gray-400 shadow-[0_0_0_1px_rgba(0,0,0,0.05)]'
           }`}
         >
