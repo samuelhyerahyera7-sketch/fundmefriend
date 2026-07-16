@@ -266,9 +266,9 @@ export default function DonateForm({ campaignId }: { campaignId: string }) {
           role="switch"
           aria-checked={isAnonymous}
           onClick={() => setIsAnonymous(v => !v)}
-          className={`relative shrink-0 w-12 h-7 rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-green ${isAnonymous ? 'bg-brand-green' : 'bg-gray-300'}`}
+          className={`relative shrink-0 w-12 h-7 rounded-full border transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-green ${isAnonymous ? 'bg-brand-green border-brand-green-dark' : 'bg-gray-400 border-gray-400'}`}
         >
-          <span className={`absolute top-1 left-1 w-5 h-5 bg-white rounded-full shadow-md transition-transform duration-200 ${isAnonymous ? 'translate-x-5' : 'translate-x-0'}`} />
+          <span className={`absolute top-1 left-1 w-5 h-5 bg-white rounded-full shadow-[0_1px_2px_rgba(0,0,0,0.25)] transition-transform duration-200 ${isAnonymous ? 'translate-x-5' : 'translate-x-0'}`} />
         </button>
         <span className="text-sm text-gray-700 font-medium">Donate anonymously</span>
       </label>
