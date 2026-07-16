@@ -32,6 +32,7 @@ export default function PayPalButton({ campaignId, amount, message, isAnonymous,
   const containerRef = useRef<HTMLDivElement>(null)
   const [error, setError] = useState(clientId ? '' : 'PayPal is not set up for this site yet.')
   const [ready, setReady] = useState(false)
+  const hadSpecificError = useRef(false)
 
   useEffect(() => {
     if (!clientId) return
@@ -44,13 +45,19 @@ export default function PayPalButton({ campaignId, amount, message, isAnonymous,
       window.paypal.Buttons({
         style: { layout: 'vertical', color: 'gold', shape: 'rect', label: 'paypal' },
         createOrder: async () => {
+          hadSpecificError.current = false
+          setError('')
           const res = await fetch('/api/paypal/create-order', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ campaignId, amount, message, isAnonymous, donorId }),
           })
-          const data = await res.json()
-          if (!res.ok) { setError(data.error ?? 'Could not start PayPal checkout'); throw new Error(data.error) }
+          const data = await res.json().catch(() => ({}))
+          if (!res.ok) {
+            hadSpecificError.current = true
+            setError(data.error || `Could not start PayPal checkout (status ${res.status})`)
+            throw new Error(data.error || `create-order failed with status ${res.status}`)
+          }
           return data.orderID
         },
         onApprove: async (data) => {
@@ -61,12 +68,16 @@ export default function PayPalButton({ campaignId, amount, message, isAnonymous,
           })
           if (!res.ok) {
             const d = await res.json().catch(() => ({}))
-            setError(d.error ?? 'Payment could not be completed')
+            hadSpecificError.current = true
+            setError(d.error || `Payment could not be completed (status ${res.status})`)
             return
           }
           onSuccess()
         },
-        onError: () => setError('Something went wrong with PayPal. Please try again.'),
+        onError: (err) => {
+          if (hadSpecificError.current) return
+          setError(`Something went wrong with PayPal: ${err instanceof Error ? err.message : String(err)}`)
+        },
       }).render(containerRef.current)
       setReady(true)
     }

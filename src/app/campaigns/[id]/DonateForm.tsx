@@ -108,20 +108,26 @@ export default function DonateForm({ campaignId }: { campaignId: string }) {
     return (
       <div className="space-y-4">
         {/* Currency toggle */}
-        <div className="grid grid-cols-2 gap-1 p-1 bg-gray-100 rounded-xl">
+        <div className="grid grid-cols-2 gap-1.5 p-1 bg-gray-100 rounded-xl">
           <button
             type="button"
             onClick={() => switchCurrency('ZAR')}
-            className={`py-2 rounded-lg text-xs font-bold transition-all ${currency === 'ZAR' ? 'bg-white text-[#01224b] shadow-sm' : 'text-gray-500'}`}
+            className={`flex flex-col items-center gap-0.5 py-2.5 rounded-lg transition-all ${
+              currency === 'ZAR' ? 'bg-white shadow-sm' : 'hover:bg-white/50'
+            }`}
           >
-            ZAR · Ozow (South Africa)
+            <span className={`text-sm font-bold ${currency === 'ZAR' ? 'text-[#01224b]' : 'text-gray-500'}`}>ZAR</span>
+            <span className="text-[10px] text-gray-400">Ozow · South Africa</span>
           </button>
           <button
             type="button"
             onClick={() => switchCurrency('USD')}
-            className={`py-2 rounded-lg text-xs font-bold transition-all ${currency === 'USD' ? 'bg-white text-[#01224b] shadow-sm' : 'text-gray-500'}`}
+            className={`flex flex-col items-center gap-0.5 py-2.5 rounded-lg transition-all ${
+              currency === 'USD' ? 'bg-white shadow-sm' : 'hover:bg-white/50'
+            }`}
           >
-            USD · PayPal (International)
+            <span className={`text-sm font-bold ${currency === 'USD' ? 'text-[#01224b]' : 'text-gray-500'}`}>USD</span>
+            <span className="text-[10px] text-gray-400">PayPal · International</span>
           </button>
         </div>
 

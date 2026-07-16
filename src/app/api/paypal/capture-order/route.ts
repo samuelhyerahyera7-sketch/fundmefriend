@@ -27,8 +27,9 @@ export async function POST(req: NextRequest) {
   let capture
   try {
     capture = await capturePayPalOrder(orderID)
-  } catch {
-    return NextResponse.json({ error: 'Could not capture PayPal payment' }, { status: 502 })
+  } catch (err) {
+    const detail = err instanceof Error ? err.message : String(err)
+    return NextResponse.json({ error: `Could not capture PayPal payment. ${detail}` }, { status: 502 })
   }
 
   if (capture.status !== 'COMPLETED') {

@@ -16,7 +16,10 @@ async function getAccessToken(): Promise<string> {
     body: 'grant_type=client_credentials',
   })
 
-  if (!res.ok) throw new Error('Failed to authenticate with PayPal')
+  if (!res.ok) {
+    const body = await res.text().catch(() => '')
+    throw new Error(`PayPal auth failed (${res.status}): ${body.slice(0, 300)}`)
+  }
   const data = await res.json()
   return data.access_token
 }
@@ -39,7 +42,10 @@ export async function createPayPalOrder(amountUsd: number, reference: string) {
     }),
   })
 
-  if (!res.ok) throw new Error('Failed to create PayPal order')
+  if (!res.ok) {
+    const body = await res.text().catch(() => '')
+    throw new Error(`PayPal create-order failed (${res.status}): ${body.slice(0, 300)}`)
+  }
   return res.json()
 }
 
@@ -54,6 +60,9 @@ export async function capturePayPalOrder(orderId: string) {
     },
   })
 
-  if (!res.ok) throw new Error('Failed to capture PayPal order')
+  if (!res.ok) {
+    const body = await res.text().catch(() => '')
+    throw new Error(`PayPal capture failed (${res.status}): ${body.slice(0, 300)}`)
+  }
   return res.json()
 }

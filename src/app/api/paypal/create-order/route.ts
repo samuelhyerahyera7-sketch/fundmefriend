@@ -63,8 +63,9 @@ export async function POST(req: NextRequest) {
   let order
   try {
     order = await createPayPalOrder(amountUsd, reference)
-  } catch {
-    return NextResponse.json({ error: 'Could not start PayPal checkout. Please try again.' }, { status: 502 })
+  } catch (err) {
+    const detail = err instanceof Error ? err.message : String(err)
+    return NextResponse.json({ error: `Could not start PayPal checkout. ${detail}` }, { status: 502 })
   }
 
   const { error: updateErr } = await supabase
